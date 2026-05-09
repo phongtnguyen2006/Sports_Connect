@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Profile from "./pages/Profile";
 
 export default function App() {
   const [message, setMessage] = useState('Loading...');
@@ -10,10 +12,35 @@ export default function App() {
       .catch(() => setMessage('Failed to reach backend'));
   }, []);
 
+  function Home() {
+
   return (
-    <main>
+
+    <>
+
       <h1>Sports Connect</h1>
-      <p>{message}</p>
+
+      <p>testing is this working sm</p>
+
+    </>
+
+  );
+
+}
+
+  return (
+
+    <main>
+
+      <Routes>
+
+        <Route path="/" element={<Home />} />
+
+        <Route path="/profile" element={<Profile />} />
+
+      </Routes>
+
     </main>
+
   );
 }
