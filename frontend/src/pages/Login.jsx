@@ -60,8 +60,19 @@ export default function Login() {
             fontSize: '16px',
           }}
         />
-      </div>
-
+        <a
+        href="#"
+        style={{
+            alignSelf: 'flex-end',
+            marginTop: '8px',
+            fontSize: '14px',
+            color: '#2563eb',
+            textDecoration: 'none',
+        }}
+        >
+        Forgot password?
+        </a>
+        
       <button
         type="button"
         style={{
@@ -79,6 +90,8 @@ export default function Login() {
         >
         Login
         </button>
+
+        </div>
     </div>
   );
 }
