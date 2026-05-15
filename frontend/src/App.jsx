@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import Login from './pages/Login';
+import Registration from './pages/Registration';
 
 export default function App() {
   const [message, setMessage] = useState('Loading...');
@@ -12,8 +14,7 @@ export default function App() {
 
   return (
     <main>
-      <h1>Sports Connect</h1>
-      <p>{message}</p>
+      <Registration />
     </main>
   );
 }
