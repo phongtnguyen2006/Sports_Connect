@@ -1,50 +1,19 @@
-import { useEffect, useState } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import NavBar from './components/NavBar';
+import Feed from './pages/Feed';
 import Login from './pages/Login';
-import Registration from './pages/Registration';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Profile from "./pages/Profile";
+import Profile from './pages/Profile';
 
 export default function App() {
-  const [message, setMessage] = useState('Loading...');
-
-  useEffect(() => {
-    fetch('/api/hello')
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch(() => setMessage('Failed to reach backend'));
-  }, []);
-
-  function Home() {
-
   return (
-    <main>
-      <Registration />
-
     <>
-
-      <h1>Sports Connect</h1>
-
-      <p>testing is this working sm</p>
-
-    </>
-
-  );
-
-}
-
-  return (
-
-    <main>
-
+      <NavBar />
       <Routes>
-
-        <Route path="/" element={<Home />} />
-
+        <Route path="/" element={<Navigate to="/feed" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/feed" element={<Feed />} />
         <Route path="/profile" element={<Profile />} />
-
       </Routes>
-
-    </main>
-
+    </>
   );
 }
