@@ -20,3 +20,10 @@ npm run dev
 - Backend:  http://localhost:3001
 
 `/api/*` requests from the frontend dev server are proxied to the backend.
+
+## Event feed
+
+- **Feed** (`/feed`) — lists events from `GET /api/events` with title, description, date/time, location, sport, and host.
+- **Create Event** (`/create-event`) — posts new events via `POST /api/events`, then returns to the feed.
+
+Events are stored in memory on the backend (resets when the server restarts). Seed data matches the sample posts on the profile page.
