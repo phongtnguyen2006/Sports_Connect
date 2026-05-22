@@ -1,4 +1,5 @@
 import { formatEventMeta } from '../utils/formatEventMeta';
+import './EventCard.css';
 
 /** @typedef {import('../types/event.js').Event} Event */
 
