@@ -1,0 +1,92 @@
+main:has(.feed-page) {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feed-page {
+  min-height: calc(100vh - 56px);
+  width: 100%;
+  background: #f7f9fc;
+  color: #172033;
+  padding: 40px clamp(24px, 5vw, 72px);
+  box-sizing: border-box;
+}
+
+.feed-page * {
+  box-sizing: border-box;
+}
+
+.feed-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.feed-header h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+}
+
+.feed-subtitle {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.feed-create-link {
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 12px 20px;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.feed-create-link:hover {
+  background: #1d4ed8;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.feed-status {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 32px 24px;
+  text-align: center;
+  color: #475569;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.feed-status-error {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.feed-status a {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .feed-page {
+    padding: 28px 18px;
+  }
+
+  .feed-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
