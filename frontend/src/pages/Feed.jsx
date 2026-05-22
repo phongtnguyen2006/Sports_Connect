@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchEvents } from '../api/events';
 import EventCard from '../components/EventCard';
-import '../components/EventCard.css';
 import './Feed.css';
 
 /** @typedef {import('../types/event.js').Event} Event */
@@ -46,6 +45,9 @@ export default function Feed() {
           <h1>Event Feed</h1>
           <p className="feed-subtitle">
             Discover pickup games and sports meetups near you
+            {!loading && !error && events.length > 0
+              ? ` · ${events.length} event${events.length === 1 ? '' : 's'}`
+              : ''}
           </p>
         </div>
         <Link className="feed-create-link" to="/create-event">
