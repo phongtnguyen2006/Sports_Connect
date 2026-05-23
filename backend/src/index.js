@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import eventsRouter from './routes/events.js';
+import apiRouter from './routes/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -9,15 +9,8 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok' });
-});
-
-app.get('/api/hello', (_req, res) => {
-  res.json({ message: 'Hello from the backend!' });
-});
-
-app.use('/api/events', eventsRouter);
+// All feature routers live under /api (see routes/index.js).
+app.use('/api', apiRouter);
 
 app.listen(PORT, () => {
   console.log(`Backend listening on http://localhost:${PORT}`);
