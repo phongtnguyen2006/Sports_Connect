@@ -1,23 +1,48 @@
-import { useState } from 'react';
-import Login from './pages/Login';
-import Registration from './pages/Registration';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import NavBar from './components/NavBar';
+import CreateEvent from './pages/CreateEvent';
+import Feed from './pages/Feed';
 import ForgotPassword from './pages/ForgotPassword';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
+import Registration from './pages/Registration';
 
-export default function App() {
-  const [page, setPage] = useState('login');
-
-  if (page === 'register') {
-    return <Registration onBackToLogin={() => setPage('login')} />;
-  }
-
-  if (page === 'forgot-password') {
-    return <ForgotPassword onBackToLogin={() => setPage('login')} />;
-  }
+function LoginPage() {
+  const navigate = useNavigate();
 
   return (
     <Login
-      onRegisterClick={() => setPage('register')}
-      onForgotPasswordClick={() => setPage('forgot-password')}
+      onRegisterClick={() => navigate('/register')}
+      onForgotPasswordClick={() => navigate('/forgot-password')}
     />
+  );
+}
+
+function RegistrationPage() {
+  const navigate = useNavigate();
+
+  return <Registration onBackToLogin={() => navigate('/login')} />;
+}
+
+function ForgotPasswordPage() {
+  const navigate = useNavigate();
+
+  return <ForgotPassword onBackToLogin={() => navigate('/login')} />;
+}
+
+export default function App() {
+  return (
+    <>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Navigate to="/feed" replace />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegistrationPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/create-event" element={<CreateEvent />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </>
   );
 }
