@@ -1,4 +1,4 @@
-export default function Login() {
+export default function Login({ onRegisterClick, onForgotPasswordClick }) {
   return (
     <div
       style={{
@@ -60,22 +60,51 @@ export default function Login() {
             fontSize: '16px',
           }}
         />
-        <a
-        href="#"
-        style={{
-            alignSelf: 'flex-end',
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '272px',
             marginTop: '8px',
-            fontSize: '14px',
-            color: '#2563eb',
-            textDecoration: 'none',
-        }}
+          }}
         >
-        Forgot password?
-        </a>
-        
-      <button
-        type="button"
-        style={{
+          <button
+            type="button"
+            onClick={onRegisterClick}
+            style={{
+              border: 'none',
+              background: 'none',
+              padding: 0,
+              fontSize: '14px',
+              color: '#2563eb',
+              textDecoration: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Register
+          </button>
+
+          <button
+            type="button"
+            onClick={onForgotPasswordClick}
+            style={{
+              border: 'none',
+              background: 'none',
+              padding: 0,
+              fontSize: '14px',
+              color: '#2563eb',
+              textDecoration: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Forgot password?
+          </button>
+        </div>
+
+        <button
+          type="button"
+          style={{
             marginTop: '20px',
             padding: '10px',
             width: '272px',
@@ -86,12 +115,11 @@ export default function Login() {
             fontSize: '16px',
             fontWeight: 'bold',
             cursor: 'pointer',
-        }}
+          }}
         >
-        Login
+          Login
         </button>
-
-        </div>
+      </div>
     </div>
   );
 }

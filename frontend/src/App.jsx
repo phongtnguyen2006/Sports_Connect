@@ -1,19 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import Login from './pages/Login';
+import Registration from './pages/Registration';
+import ForgotPassword from './pages/ForgotPassword';
 
 export default function App() {
-  const [message, setMessage] = useState('Loading...');
+  const [page, setPage] = useState('login');
 
-  useEffect(() => {
-    fetch('/api/hello')
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch(() => setMessage('Failed to reach backend'));
-  }, []);
+  if (page === 'register') {
+    return <Registration onBackToLogin={() => setPage('login')} />;
+  }
+
+  if (page === 'forgot-password') {
+    return <ForgotPassword onBackToLogin={() => setPage('login')} />;
+  }
 
   return (
-    <main>
-      <h1>Sports Connect</h1>
-      <p>{message}</p>
-    </main>
+    <Login
+      onRegisterClick={() => setPage('register')}
+      onForgotPasswordClick={() => setPage('forgot-password')}
+    />
   );
 }

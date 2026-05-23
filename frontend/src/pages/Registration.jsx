@@ -1,7 +1,42 @@
 import { useState } from 'react';
 
-export default function Registration() {
+export default function Registration({ onBackToLogin }) {
   const [showRequirements, setShowRequirements] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [message, setMessage] = useState('');
+
+  async function handleRegister() {
+    setMessage('');
+
+    if (!email || !password) {
+      setMessage('Please enter both email and password.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.error || 'Registration failed.');
+        return;
+      }
+
+      setMessage('Registration successful!');
+    } catch (error) {
+      setMessage('Could not connect to backend.');
+    }
+  }
 
   return (
     <div
@@ -135,6 +170,8 @@ export default function Registration() {
           <input
             type="email"
             placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             style={{
               padding: '10px',
               width: '250px',
@@ -159,6 +196,8 @@ export default function Registration() {
           <input
             type="password"
             placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             style={{
               padding: '10px',
               width: '250px',
@@ -185,8 +224,22 @@ export default function Registration() {
           </button>
         </div>
 
+        {message && (
+          <p
+            style={{
+              gridColumn: '1 / 3',
+              textAlign: 'center',
+              margin: 0,
+              color: message.includes('successful') ? 'green' : 'red',
+            }}
+          >
+            {message}
+          </p>
+        )}
+
         <button
           type="button"
+          onClick={handleRegister}
           style={{
             gridColumn: '1 / 3',
             marginTop: '10px',
@@ -202,6 +255,24 @@ export default function Registration() {
           }}
         >
           Register
+        </button>
+
+        <button
+          type="button"
+          onClick={onBackToLogin}
+          style={{
+            gridColumn: '1 / 3',
+            justifySelf: 'center',
+            marginTop: '-8px',
+            border: 'none',
+            background: 'none',
+            color: '#2563eb',
+            fontSize: '14px',
+            cursor: 'pointer',
+            padding: 0,
+          }}
+        >
+          Back to Login
         </button>
       </div>
 
