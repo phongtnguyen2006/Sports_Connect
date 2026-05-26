@@ -1,7 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const bcrypt = require('bcrypt');
-const sqlite3 = require('sqlite3').verbose();
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import bcrypt from 'bcrypt';
+import sqlite3 from 'sqlite3';
+import eventsRouter from './routes/events.js';
 
 const app = express();
 const PORT = 3000;
@@ -103,6 +105,8 @@ app.post('/api/login', (req, res) => {
     }
   );
 });
+
+app.use('/api/events', eventsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

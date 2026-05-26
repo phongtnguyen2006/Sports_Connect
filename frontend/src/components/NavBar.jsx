@@ -14,6 +14,9 @@ export default function NavBar() {
         <NavLink to="/feed" className={linkClass}>
           Feed
         </NavLink>
+        <NavLink to="/create-event" className={linkClass}>
+          Create Event
+        </NavLink>
         <NavLink to="/profile" className={linkClass}>
           Profile
         </NavLink>
