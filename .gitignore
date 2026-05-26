@@ -8,3 +8,6 @@ build/
 npm-debug.log*
 .vite/
 coverage/
+sportsconnect.db
+*.db
+.env
