@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
 
 const url = process.env.SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const secretKey = process.env.SUPABASE_SECRET_KEY;
 
 /**
  * Server-side Supabase client, created with the service role key.
@@ -13,13 +13,13 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
  */
 let supabase = null;
 
-if (url && serviceRoleKey) {
-  supabase = createClient(url, serviceRoleKey, {
+if (url && secretKey) {
+  supabase = createClient(url, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 } else {
   console.warn(
-    '[supabase] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY missing — ' +
+    '[supabase] SUPABASE_URL or SUPABASE_SECRET_KEY missing — ' +
       'Supabase client not initialized. See DATABASE_SETUP.txt.'
   );
 }
@@ -39,7 +39,7 @@ export function getSupabase() {
   if (!supabase) {
     throw new Error(
       'Supabase is not configured. Fill in SUPABASE_URL and ' +
-        'SUPABASE_SERVICE_ROLE_KEY in backend/.env. See DATABASE_SETUP.txt.'
+        'SUPABASE_SECRET_KEY in backend/.env. See DATABASE_SETUP.txt.'
     );
   }
   return supabase;
