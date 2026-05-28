@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRouter from './auth.js';
 import eventsRouter from './events.js';
 import usersRouter from './users.js';
+import dbTestRouter from './dbtest.js'; // TEMP: connection test, remove after verifying
 
 /**
  * Aggregates every feature router under a single /api mount point.
@@ -17,5 +18,6 @@ router.get('/health', (_req, res) => {
 router.use('/auth', authRouter);
 router.use('/events', eventsRouter);
 router.use('/users', usersRouter);
+router.use('/db-test', dbTestRouter); // TEMP: connection test, remove after verifying
 
 export default router;
