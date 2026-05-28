@@ -1,8 +1,10 @@
 
 import {useState,useRef} from "react";
 import "./EditProfile.css";
-function ProfilePage(){
-    const [imageUrl,setImageUrl] = useState("/image/images-2.jpeg");
+
+function EditProfile(){
+
+    const [imageUrl,setImageUrl] = useState("/images/images-2.jpeg");
     const fileInputRef = useRef(null);
 
     const handleImageUpload = (event) => {
@@ -13,9 +15,6 @@ function ProfilePage(){
             setImageUrl(previewUrl);
         }
     }
-};
-function EditProfile(){
-
 
 
     return(
@@ -24,9 +23,16 @@ function EditProfile(){
                 
                 <img
                     className="profile-image"
-                    src="/images/images-2.jpeg"
+                    src={imageUrl}
                     alt="John Doe profile"
                     onClick={()=> fileInputRef.current.click()}
+                />
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    style={{ display: "none" }}
                 />
                 <div className="temp-make-button-edit-profile-photo">
                     Edit Picture
