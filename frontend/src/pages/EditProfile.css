@@ -21,3 +21,38 @@
   cursor: pointer;
   border: 3px solid #2563eb;
 }
+.profile-name,
+.username,
+.Bio {
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 20px;
+}
+
+.profile-name div,
+.username div,
+.Bio div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+  color: #172033;
+}
+
+.profile-name input,
+.username input,
+.Bio input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.profile-name input:focus,
+.username input:focus,
+.Bio input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
