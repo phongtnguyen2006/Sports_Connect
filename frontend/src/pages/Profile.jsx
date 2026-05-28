@@ -1,4 +1,6 @@
 import "./Profile.css";
+import {Link} from "react-router-dom";
+
 
 const posts = [
   {
@@ -46,9 +48,9 @@ function Profile() {
               <span>Usually free evenings</span>
             </div>
 
-            <button className="edit-profile-button" type="button">
+            <Link className="edit-profile-button" to="/profile/edit-profile">
               Edit Profile
-            </button>
+            </Link>
           </div>
         </div>
 
