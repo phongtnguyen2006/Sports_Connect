@@ -18,34 +18,9 @@ const posts = [
   },
 ];
 
-function Sidebar() {
-  return (
-    <nav className="sidebar" aria-label="Profile navigation">
-      <a className="sidebar-link active" href="/">
-        <img className="sidebar-icon" src="/images/home_pic.png" alt="" />
-        <span>Home</span>
-      </a>
-      <a className="sidebar-link" href="/profile">
-        <span className="sidebar-avatar" aria-hidden="true">
-          JD
-        </span>
-        <span>Profile</span>
-      </a>
-      <a className="sidebar-link" href="/create-event">
-        <span className="sidebar-symbol" aria-hidden="true">
-          +
-        </span>
-        <span>Post</span>
-      </a>
-    </nav>
-  );
-}
-
 function Profile() {
   return (
     <div className="profile-page">
-      <Sidebar />
-
       <section className="profile-content" aria-label="User profile">
         <div className="profile-top">
           <div className="profile-photo-wrap">
