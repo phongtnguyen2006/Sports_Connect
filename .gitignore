@@ -9,3 +9,4 @@ DATABASE_SETUP.txt
 npm-debug.log*
 .vite/
 coverage/
+

@@ -1,97 +1,42 @@
-export default function Login() {
+import './Login.css';
+
+export default function Login({ onRegisterClick, onForgotPasswordClick }) {
   return (
-    <div
-      style={{
-        minHeight: '70vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <div className="login-page">
       <h1>SportsConnect</h1>
       <h2>Login</h2>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          marginTop: '20px',
-        }}
-      >
-        <label style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-          Username
-        </label>
-
-        <input
-          type="text"
-          placeholder="Enter your username"
-          style={{
-            padding: '10px',
-            width: '250px',
-            border: '1px solid #ccc',
-            borderRadius: '6px',
-            fontSize: '16px',
-          }}
-        />
+      <div className="login-field login-username-field">
+        <label>Username</label>
+        <input type="text" placeholder="Enter your username" />
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          marginTop: '40px',
-        }}
-      >
-        <label style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-          Password
-        </label>
+      <div className="login-field login-password-field">
+        <label>Password</label>
+        <input type="password" placeholder="Enter your password" />
 
-        <input
-          type="password"
-          placeholder="Enter your password"
-          style={{
-            padding: '10px',
-            width: '250px',
-            border: '1px solid #ccc',
-            borderRadius: '6px',
-            fontSize: '16px',
-          }}
-        />
-        <a
-        href="#"
-        style={{
-            alignSelf: 'flex-end',
-            marginTop: '8px',
-            fontSize: '14px',
-            color: '#2563eb',
-            textDecoration: 'none',
-        }}
-        >
-        Forgot password?
-        </a>
-        
-      <button
-        type="button"
-        style={{
-            marginTop: '20px',
-            padding: '10px',
-            width: '272px',
-            border: 'none',
-            borderRadius: '6px',
-            backgroundColor: '#590808',
-            color: 'white',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-        }}
-        >
-        Login
-        </button>
+        <div className="login-link-row">
+          <button
+            type="button"
+            className="login-text-link"
+            onClick={onRegisterClick}
+          >
+            Register
+          </button>
 
+          <button
+            type="button"
+            className="login-text-link"
+            onClick={onForgotPasswordClick}
+          >
+            Forgot password?
+          </button>
         </div>
+
+        <button type="button" className="login-button">
+          Login
+        </button>
+      </div>
     </div>
   );
 }
