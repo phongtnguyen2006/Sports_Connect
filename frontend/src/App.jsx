@@ -4,6 +4,7 @@ import CreateEvent from './pages/CreateEvent';
 import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/feed" element={<Feed />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/edit-profile" element={<EditProfile />} />
       </Routes>
     </>
   );
