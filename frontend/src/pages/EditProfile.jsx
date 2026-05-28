@@ -1,5 +1,6 @@
 
 import {useState,useRef} from "react";
+import "./EditProfile.css";
 function ProfilePage(){
     const [imageUrl,setImageUrl] = useState("/image/images-2.jpeg");
     const fileInputRef = useRef(null);
