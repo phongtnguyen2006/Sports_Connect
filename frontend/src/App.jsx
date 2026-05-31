@@ -5,6 +5,7 @@ import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import Registration from './pages/Registration'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit-profile" element={<EditProfile />} />
+        <Route path="/Registration" element={<Registration/>} />
       </Routes>
     </>
   );
