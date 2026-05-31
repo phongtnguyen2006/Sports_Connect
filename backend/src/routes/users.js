@@ -27,4 +27,47 @@ router.get('/:username', async (req, res) => {
   res.json({ profile: data });
 });
 
+
+router.post("/register", async(req,res) => {
+  //create/register user
+  if (!isSupabaseConfigured()) {
+    return res
+    .status(503)
+    .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const supabase = getSupabase();
+
+  const{email,password,username,firstName,lastName} = req.body;
+
+  if(!email || !password || !username || !firstName || !lastName){
+    return res.status(400).json({
+      error:"Email, password, username, first name, and last name are required"
+    });
+  }
+
+  const {data,error} = await supabase.auth.signUp({
+    email,
+    password
+  });
+  //testing
+  console.log("Supabase signup data:", data);
+  console.log("Supabase signup error:", error);
+
+  if(error){
+    return res.status(400).json({
+      error:error.message
+    });
+  }
+
+  return res.status(201).json({
+    message: "Signup worked",
+    user: {
+      id: data.user?.id,
+      email: data.user?.email
+    }
+  });
+
+});
+
 export default router;
