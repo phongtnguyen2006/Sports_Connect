@@ -61,72 +61,72 @@ export default function Registration() {
     }
   }
   return (
-    
+   
     <div className="registration-page">
+  
       <h1>SportsConnect</h1>
-      <h2>Register</h2>
+      <h2>Create Account</h2>
 
-      <div className="registration-form">
-        <div className="form-field">
-          <label>First Name</label>
-          <input type="text" placeholder="Enter your first name" />
+      {error && <p style={{color: "red"}} > {error} </p>}
+
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="firstName"> First name</label>
+          <input
+          id="firstName"
+          type="text"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          />
         </div>
-
-        <div className="form-field">
-          <label>Last Name</label>
-          <input type="text" placeholder="Enter your last name" />
+        <div>
+          <label htmlFor="lastName"> Last name</label>
+          <input
+          id="lastName"
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          />
         </div>
-
-        <div className="form-field">
-          <label>Username</label>
-          <input type="text" placeholder="Create a username" />
+        <div>
+          <label htmlFor="Username"> Username</label>
+          <input
+          id="Username"
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          />
         </div>
-
-        <div className="form-field">
-          <label>Email</label>
-          <input type="email" placeholder="Enter your email" />
+        <div>
+          <label htmlFor="email"> Email</label>
+          <input
+          id="email"
+          type="text"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          />
         </div>
+        <div>
+          <label htmlFor="password"> Password</label>
+          <input
+          id="password"
+          type="text"
+          name="password"
+          value={formData.email}
+          onChange={handleChange}
+          />
 
-        <div className="form-field">
-          <label>Password</label>
-          <input type="password" placeholder="Enter your password" />
-
-          <button
-            className="requirements-button"
-            type="button"
-            onClick={() => setShowRequirements(true)}
-          >
-            Requirements
-          </button>
         </div>
-
-        <button className="register-button" type="button">
-          Register
+        <button type="submit" disabled={loading}>
+          {loading ? "Creating account(yay)" : "Register"}
         </button>
-      </div>
 
-      {showRequirements && (
-        <div className="modal-overlay">
-          <div className="requirements-modal">
-            <h3>Password Requirements</h3>
-
-            <ul>
-              <li>8-12 characters</li>
-              <li>At least one special character</li>
-              <li>At least one uppercase letter</li>
-              <li>At least one lowercase letter</li>
-            </ul>
-
-            <button
-              className="close-button"
-              type="button"
-              onClick={() => setShowRequirements(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      </form>
     </div>
+
   );
 }
