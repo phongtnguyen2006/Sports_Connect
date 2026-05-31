@@ -29,11 +29,28 @@ export default function Registration() {
     }));
 
   }
+  function isPasswordValid(password) {
+    const hasValidLength = password.length >= 8 && password.length <= 12;
+    const hasSpecialCharacter = /[^A-Za-z0-9]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+
+    return (
+      hasValidLength &&
+      hasSpecialCharacter &&
+      hasUppercase &&
+      hasLowercase
+    );
+  }
 
   async function handleSubmit(event){
     event.preventDefault();
 
     setError("");
+    if(!isPasswordValid(formData.password)){
+      setError("Password must be 8-12 characters and  include uppercase,lowercase, and a special Character Data.");
+        return;
+    }
     setLoading(true);
 
     try{
@@ -114,18 +131,22 @@ export default function Registration() {
           <label htmlFor="password"> Password</label>
           <input
           id="password"
-          type="text"
+          type="password"
           name="password"
-          value={formData.email}
+          value={formData.password}
           onChange={handleChange}
           />
-
+            <p className="password-help">
+          Password must be 8-12 characters and include uppercase, lowercase, and a special character.
+          </p>
         </div>
+
         <button type="submit" disabled={loading}>
           {loading ? "Creating account(yay)" : "Register"}
         </button>
 
       </form>
+      
     </div>
 
   );
