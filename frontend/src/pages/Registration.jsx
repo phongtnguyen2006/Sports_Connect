@@ -1,12 +1,67 @@
 import { useState } from 'react';
-
-
+import { useNavigate } from "react-router-dom";
 import './Registration.css';
+
 
 export default function Registration() {
   const [showRequirements, setShowRequirements] = useState(false);
+  const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    username: "",
+    firstName: "",
+    lastName: ""
+  });
+
+  const [error,setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  function handleChange(event){
+    const name = event.target.name;
+    const value = event.target.value;
+
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+
+  }
+
+  async function handleSubmit(event){
+    event.preventDefault();
+
+    setError("");
+    setLoading(true);
+
+    try{
+      const response = await fetch("/api/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+
+      if(!response.ok){
+        throw new Error(data.error || "registration failed");
+      }
+      console.log("Registration succesful:", data);
+
+      navigate("/login");
+
+    }catch (err){
+      setError(err.message);
+
+    }finally{
+      setLoading(false);
+    }
+  }
   return (
+    
     <div className="registration-page">
       <h1>SportsConnect</h1>
       <h2>Register</h2>
