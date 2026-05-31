@@ -4,15 +4,11 @@ import './Registration.css';
 
 
 export default function Registration() {
-  const [showRequirements, setShowRequirements] = useState(false);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
-    username: "",
-    firstName: "",
-    lastName: ""
+    password: ""
   });
 
   const [error,setError] = useState("");
@@ -54,7 +50,7 @@ export default function Registration() {
     setLoading(true);
 
     try{
-      const response = await fetch("/api/users/register", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -68,7 +64,7 @@ export default function Registration() {
       }
       console.log("Registration succesful:", data);
 
-      navigate("/login");
+      navigate("/registration/complete-profile");
 
     }catch (err){
       setError(err.message);
@@ -88,40 +84,10 @@ export default function Registration() {
 
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="firstName"> First name</label>
-          <input
-          id="firstName"
-          type="text"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="lastName"> Last name</label>
-          <input
-          id="lastName"
-          type="text"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="Username"> Username</label>
-          <input
-          id="Username"
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          />
-        </div>
-        <div>
           <label htmlFor="email"> Email</label>
           <input
           id="email"
-          type="text"
+          type="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
