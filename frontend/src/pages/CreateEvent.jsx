@@ -21,6 +21,15 @@ export default function CreateEvent() {
     setError(null);
 
     try {
+      const parsedMaxAttendees = maxAttendees ? Number(maxAttendees) : null;
+
+      if (
+        parsedMaxAttendees !== null &&
+        (!Number.isInteger(parsedMaxAttendees) || parsedMaxAttendees < 1)
+      ) {
+        throw new Error('Max attendees must be a whole number of at least 1');
+      }
+
       await createEvent({
         title,
         description,
