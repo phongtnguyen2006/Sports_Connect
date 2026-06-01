@@ -11,7 +11,7 @@ export default function CreateEvent() {
   const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
   const [sport, setSport] = useState('');
-  const [hostUsername, setHostUsername] = useState('');
+  // const [hostUsername, setHostUsername] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(/** @type {string | null} */ (null));
 
@@ -121,7 +121,7 @@ export default function CreateEvent() {
             />
           </div>
 
-          <div className="form-field">
+          {/* <div className="form-field">
             <label htmlFor="hostUsername">Host username</label>
             <input
               id="hostUsername"
@@ -130,7 +130,7 @@ export default function CreateEvent() {
               onChange={(e) => setHostUsername(e.target.value)}
               placeholder="e.g. johndoe"
             />
-          </div>
+          </div> */}
         </div>
 
         <button type="submit" disabled={submitting}>
