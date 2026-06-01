@@ -1,97 +1,102 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
+
 export default function Login() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      if (data.session?.access_token) {
+        localStorage.setItem("access_token", data.session.access_token);
+      }
+
+      navigate("/feed");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div
-      style={{
-        minHeight: '70vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <div className="login-page">
       <h1>SportsConnect</h1>
       <h2>Login</h2>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          marginTop: '20px',
-        }}
-      >
-        <label style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-          Username
-        </label>
+      {error && <p className="login-error">{error}</p>}
 
-        <input
-          type="text"
-          placeholder="Enter your username"
-          style={{
-            padding: '10px',
-            width: '250px',
-            border: '1px solid #ccc',
-            borderRadius: '6px',
-            fontSize: '16px',
-          }}
-        />
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          marginTop: '40px',
-        }}
-      >
-        <label style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-          Password
-        </label>
-
-        <input
-          type="password"
-          placeholder="Enter your password"
-          style={{
-            padding: '10px',
-            width: '250px',
-            border: '1px solid #ccc',
-            borderRadius: '6px',
-            fontSize: '16px',
-          }}
-        />
-        <a
-        href="#"
-        style={{
-            alignSelf: 'flex-end',
-            marginTop: '8px',
-            fontSize: '14px',
-            color: '#2563eb',
-            textDecoration: 'none',
-        }}
-        >
-        Forgot password?
-        </a>
-        
-      <button
-        type="button"
-        style={{
-            marginTop: '20px',
-            padding: '10px',
-            width: '272px',
-            border: 'none',
-            borderRadius: '6px',
-            backgroundColor: '#590808',
-            color: 'white',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-        }}
-        >
-        Login
-        </button>
-
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+          />
         </div>
+
+        <div>
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+
+          <a className="forgot-password-link" href="#">
+            Forgot password?
+          </a>
+
+          <Link className="register-instead-link" to="/Registration">
+            Register instead
+          </Link>
+        </div>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
     </div>
   );
 }

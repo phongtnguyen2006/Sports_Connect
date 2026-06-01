@@ -13,7 +13,7 @@ export default function App() {
     <>
       <NavBar />
       <Routes>
-        <Route path="/" element={<Navigate to="/feed" replace />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/create-event" element={<CreateEvent />} />
