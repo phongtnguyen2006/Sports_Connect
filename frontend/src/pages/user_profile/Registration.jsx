@@ -50,7 +50,7 @@ export default function Registration() {
     setLoading(true);
 
     try{
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -63,6 +63,12 @@ export default function Registration() {
         throw new Error(data.error || "registration failed");
       }
       console.log("Registration succesful:", data);
+      if (data.session?.access_token) {
+        localStorage.setItem("access_token", data.session.access_token);
+      }else{
+        console.log("error storing access_token");
+      }
+     
 
       navigate("/registration/complete-profile");
 

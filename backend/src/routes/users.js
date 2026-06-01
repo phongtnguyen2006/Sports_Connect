@@ -17,7 +17,7 @@ router.get('/:username', async (req, res) => {
 
   const supabase = getSupabase();
   const { data, error } = await supabase
-    .from('profiles')
+    .from('users')
     .select('*')
     .eq('username', req.params.username)
     .maybeSingle();
@@ -27,7 +27,7 @@ router.get('/:username', async (req, res) => {
   res.json({ profile: data });
 });
 
-
+// GET /api/users/register
 router.post("/register", async(req,res) => {
   //create/register user
   if (!isSupabaseConfigured()) {
@@ -38,11 +38,14 @@ router.post("/register", async(req,res) => {
 
   const supabase = getSupabase();
 
-  const{email,password,username,firstName,lastName} = req.body;
+  //const{email,password,username,firstName,lastName} = req.body;
+  const email = req.body.email;
+  const password = req.body.password;
 
-  if(!email || !password || !username || !firstName || !lastName){
+
+  if(!email || !password){
     return res.status(400).json({
-      error:"Email, password, username, first name, and last name are required"
+      error:"Email, password are required"
     });
   }
 
@@ -51,23 +54,101 @@ router.post("/register", async(req,res) => {
     password
   });
   //testing
-  console.log("Supabase signup data:", data);
-  console.log("Supabase signup error:", error);
-
-  if(error){
+  if (error) {
     return res.status(400).json({
-      error:error.message
+      error: error.message
+    });
+  }
+  if (!data.user) {
+    return res.status(400).json({
+      error: "Signup did not return a user. The email may already be registered or email confirmation may be affecting signup."
+    });
+
+  }
+  //console.log("Supabase signup data:", data);
+  //console.log("Supabase signup error:", error);
+
+  const profileResult = await supabase
+    .from("users")
+    .insert({
+      id: data.user.id,
+      email: data.user.email,
+    })
+
+
+  if(profileResult.error){
+    return res.status(500).json({
+      error:profileResult.error.message
     });
   }
 
   return res.status(201).json({
-    message: "Signup worked",
-    user: {
-      id: data.user?.id,
-      email: data.user?.email
-    }
+    message:"Signup worked",
+    user: data.user,
+    session: data.session
+
   });
 
 });
 
+// Patch /api/users/register/complete-profile
+router.patch('/complete-profile', async (req, res) => {
+
+  if (!isSupabaseConfigured()) {
+    return res
+    .status(503)
+    .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const supabase = getSupabase();
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.replace("Bearer ", "");
+  if(!token){
+    return res.status(401).json({error:"Missing auth token"});
+  }
+
+  const result = await supabase.auth.getUser(token);
+  const data = result.data;
+  const error = result.error;
+
+  if(error){
+    return res.status(401).json({
+      error: result.error.message
+    });
+  }
+
+  const userId = data.user.id;
+
+  //const{email,password,username,firstName,lastName} = req.body;
+  const username = req.body.username;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const favorite_sports = req.body.favoriteSports;
+
+  const profileResult = await supabase
+  .from("users")
+  .update({
+    firstName: firstName,
+    lastName:  lastName,
+    username:  username,
+    favorite_sports:favorite_sports
+  })
+  .eq("id",userId);
+
+  if(profileResult.error){
+    return res.status(500).json({
+      error:profileResult.error.message
+    });
+  }
+
+  return res.status(200).json({
+    message:"Signup worked"
+  })
+
+
+});
+
+
+
 export default router;
+
