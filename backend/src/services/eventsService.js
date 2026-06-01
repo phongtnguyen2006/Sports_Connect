@@ -44,6 +44,7 @@ export async function createEvent(input) {
   const { data, error } = await supabase
     .from('events')
     .insert({
+      id: input.id, 
       title: input.title,
       description: input.description,
       date: input.date,
