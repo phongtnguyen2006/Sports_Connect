@@ -25,6 +25,7 @@ export function validateEventBody(body) {
   return {
     ok: true,
     data: {
+      id: '01d186e7-a62c-4298-8ee0-c12c02c08cd7', //Test UUID
       title: title.trim(),
       description: description.trim(),
       date,
