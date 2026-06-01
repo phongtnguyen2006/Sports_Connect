@@ -181,9 +181,5 @@ router.patch('/complete-profile', async (req, res) => {
     message:"Signup worked"
   })
 
-
 });
-
-
-
 export default router;

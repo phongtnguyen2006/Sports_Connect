@@ -44,13 +44,13 @@ export async function createEvent(input) {
   const { data, error } = await supabase
     .from('events')
     .insert({
+      id: input.id, 
       title: input.title,
       description: input.description,
       date: input.date,
       time: input.time,
       location: input.location || null,
-      sport: input.sport || null,
-      host_username: input.hostUsername,
+      sport: input.sport || null
     })
     .select()
     .single();
