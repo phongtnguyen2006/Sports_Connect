@@ -91,6 +91,42 @@ router.post("/register", async(req,res) => {
 
 });
 
+// POST /api/users/login
+router.post("/login", async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+    .status(503)
+    .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const supabase = getSupabase();
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if(!email || !password){
+    return res.status(400).json({
+      error:"Email and password are required"
+    });
+  }
+
+  const {data,error} = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error){
+    return res.status(401).json({
+      error:error.message
+    });
+  }
+
+  return res.status(200).json({
+    message:"Login worked",
+    user:data.user,
+    session:data.session
+  });
+});
+
 // Patch /api/users/register/complete-profile
 router.patch('/complete-profile', async (req, res) => {
 
@@ -151,4 +187,3 @@ router.patch('/complete-profile', async (req, res) => {
 
 
 export default router;
-
