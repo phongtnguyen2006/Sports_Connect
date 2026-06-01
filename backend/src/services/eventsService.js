@@ -49,8 +49,7 @@ export async function createEvent(input) {
       date: input.date,
       time: input.time,
       location: input.location || null,
-      sport: input.sport || null,
-      host_username: input.hostUsername,
+      sport: input.sport || null
     })
     .select()
     .single();

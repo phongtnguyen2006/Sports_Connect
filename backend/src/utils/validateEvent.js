@@ -7,7 +7,7 @@ export function validateEventBody(body) {
     return { ok: false, error: 'Request body must be a JSON object' };
   }
 
-  const { title, description, date, time, location, sport, hostUsername } = body;
+  const { title, description, date, time, location, sport } = body;
 
   if (!title || typeof title !== 'string' || !title.trim()) {
     return { ok: false, error: 'title is required' };
@@ -30,11 +30,7 @@ export function validateEventBody(body) {
       date,
       time,
       location: typeof location === 'string' ? location.trim() : '',
-      sport: typeof sport === 'string' ? sport.trim() : '',
-      hostUsername:
-        typeof hostUsername === 'string' && hostUsername.trim()
-          ? hostUsername.trim()
-          : 'anonymous',
+      sport: typeof sport === 'string' ? sport.trim() : ''
     },
   };
 }
