@@ -1,6 +1,6 @@
 /**
  * @typedef {Object} Event
- * @property {string} id
+ * @property {number} id
  * @property {string} host_id
  * @property {string} title
  * @property {string|null} description
