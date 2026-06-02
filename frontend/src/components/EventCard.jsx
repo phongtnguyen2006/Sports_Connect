@@ -7,7 +7,7 @@ import './EventCard.css';
  * @param {{ event: Event }} props
  */
 export default function EventCard({ event }) {
-  const meta = formatEventMeta(event.date, event.time, event.location);
+  const meta = formatEventMeta(event.starts_at, event.ends_at, event.location);
 
   return (
     <article className="event-card">
@@ -16,10 +16,12 @@ export default function EventCard({ event }) {
       ) : null}
       <p className="event-card-meta">{meta}</p>
       <h3 className="event-card-title">{event.title}</h3>
-      <p className="event-card-description">{event.description}</p>
-      <p className="event-card-host">
-        Hosted by <span>@{event.hostUsername}</span>
-      </p>
+      {event.description ? (
+        <p className="event-card-description">{event.description}</p>
+      ) : null}
+      {event.max_attendees ? (
+        <p className="event-card-attendees">Up to {event.max_attendees} attendees</p>
+      ) : null}
     </article>
   );
 }
