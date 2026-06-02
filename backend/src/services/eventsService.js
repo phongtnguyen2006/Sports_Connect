@@ -36,6 +36,12 @@ export async function getAllEvents() {
 }
 
 
+/**
+ * Finds one event by its database id.
+ *
+ * @param {number} id - Validated event id from the route params.
+ * @returns {Promise<import('../models/event.js').Event>}
+ */
 export async function getEventById(id) {
   const supabase = getSupabase();
   const { data, error } = await supabase.from('events')
@@ -74,6 +80,12 @@ export async function createEvent(input) {
   return toEvent(data);
 }
 
+/**
+ * Creates an RSVP row for the provided event.
+ *
+ * @param {import('../models/event.js').Event} event - Existing event being RSVP'd to.
+ * @returns {Promise<Record<string, any>>}
+ */
 export async function createEventRsvp(event) {
   const supabase = getSupabase(); 
 

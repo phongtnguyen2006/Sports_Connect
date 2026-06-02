@@ -49,7 +49,6 @@ router.post('/', async (req, res) => {
 });
 
 // POST /api/events/:id/rsvp
-
 router.post('/:id/rsvp', async(req, res) => {
   if (!requireSupabase(res)) return; 
 
