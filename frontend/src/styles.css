@@ -47,6 +47,10 @@ body {
   background: #e94560;
 }
 
+.nav-button {
+  font-family: inherit;
+}
+
 .nav-user {
   padding: 0.5rem 1rem;
   border-radius: 6px;

@@ -50,7 +50,7 @@ export default function App() {
       </Route>
 
       {/* Authenticated app — nav bar + feed, gated behind login */}
-      <Route element={<ProtectedLayout currentUser={currentUser} authLoading={authLoading}/>}>
+      <Route element={<ProtectedLayout currentUser={currentUser} setCurrentUser={setCurrentUser} authLoading={authLoading}/>}>
         <Route path="/feed" element={<Feed />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/profile" element={<Profile />} />
