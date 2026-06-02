@@ -32,8 +32,8 @@ router.get('/', async (_req, res) => {
       ...event,
       is_rsvpd: rsvpedEventIds.has(event.id),
     }));
-    
-    res.json({ eventsWithRsvpStatus });
+
+    res.json({ events: eventsWithRsvpStatus });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
