@@ -12,8 +12,8 @@ export function validateEventBody(body) {
   if (!title || typeof title !== 'string' || !title.trim()) {
     return { ok: false, error: 'title is required' };
   }
-  if (!description || typeof description !== 'string' || !description.trim()) {
-    return { ok: false, error: 'description is required' };
+  if (description !== null && description !== undefined && typeof description !== 'string') {
+    return { ok: false, error: 'description must be a string or null' };
   }
 
   if (!starts_at || typeof starts_at !== 'string' || !starts_at.trim()) {
@@ -43,17 +43,26 @@ export function validateEventBody(body) {
     }
   }
 
+  let normalizedMaxAttendees = null;
+  if (max_attendees !== null && max_attendees !== undefined && max_attendees !== '') {
+    if (!Number.isInteger(max_attendees) || max_attendees <= 0) {
+      return { ok: false, error: 'max_attendees must be a whole number greater than 0 or null' };
+    }
+
+    normalizedMaxAttendees = max_attendees;
+  }
+
   return {
     ok: true,
     data: {
       host_id: '01d186e7-a62c-4298-8ee0-c12c02c08cd7', //Test UUID
       title: title.trim(),
-      description: description.trim(),
+      description: typeof description === 'string' && description.trim() ? description.trim() : null,
       starts_at: trimmedStartsAt,
       ends_at: normalizedEndsAt,
-      location: typeof location === 'string' ? location.trim() : '',
-      sport: typeof sport === 'string' ? sport.trim() : '', 
-      max_attendees: max_attendees
+      location: typeof location === 'string' && location.trim() ? location.trim() : null,
+      sport: typeof sport === 'string' && sport.trim() ? sport.trim() : null,
+      max_attendees: normalizedMaxAttendees,
     },
   };
 }
