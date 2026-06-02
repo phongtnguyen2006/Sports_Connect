@@ -54,6 +54,16 @@ export async function getEventById(id) {
   return toEvent(data);
 }
 
+export async function getUserRsvps(userId) {
+  const supabase = getSupabase(0);
+  const { data, error } = await supabase.from('event_rsvps')
+    .select('event_id')
+    .eq('user_id', userId);
+
+  if (error) throw error; 
+  return data;
+}
+
 /**
  * @param {Record<string, any>} input - validated event fields
  * @returns {Promise<import('../models/event.js').Event>}
