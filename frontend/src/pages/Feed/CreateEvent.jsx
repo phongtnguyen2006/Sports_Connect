@@ -7,8 +7,9 @@ export default function CreateEvent() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [startsAt, setStartsAt] = useState('');
+  const [endsAt, setEndsAt] = useState('');
+  const [maxAttendees, setMaxAttendees] = useState('');
   const [location, setLocation] = useState('');
   const [sport, setSport] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -20,13 +21,23 @@ export default function CreateEvent() {
     setError(null);
 
     try {
+      const parsedMaxAttendees = maxAttendees ? Number(maxAttendees) : null;
+
+      if (
+        parsedMaxAttendees !== null &&
+        (!Number.isInteger(parsedMaxAttendees) || parsedMaxAttendees < 1)
+      ) {
+        throw new Error('Max attendees must be a whole number of at least 1');
+      }
+
       await createEvent({
         title,
-        description,
-        date,
-        time,
-        location,
-        sport
+        description: description || null,
+        starts_at: startsAt,
+        ends_at: endsAt || null,
+        max_attendees: parsedMaxAttendees,
+        location: location || null,
+        sport: sport || null
       });
       navigate('/feed');
     } catch (err) {
@@ -68,30 +79,28 @@ export default function CreateEvent() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
-            required
           />
         </div>
 
         <div className="form-row">
           <div className="form-field">
-            <label htmlFor="date">Date</label>
+            <label htmlFor="startAt">Start</label>
             <input
-              id="date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              id="startAt"
+              type="datetime-local"
+              value={startsAt}
+              onChange={(e) => setStartsAt(e.target.value)}
               required
             />
           </div>
 
           <div className="form-field">
-            <label htmlFor="time">Time</label>
+            <label htmlFor="endsAt">Ends</label>
             <input
-              id="time"
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              required
+              id="endsAt"
+              type="datetime-local"
+              value={endsAt}
+              onChange={(e) => setEndsAt(e.target.value)}
             />
           </div>
         </div>
@@ -116,6 +125,19 @@ export default function CreateEvent() {
               value={sport}
               onChange={(e) => setSport(e.target.value)}
               placeholder="e.g. Basketball"
+            />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="maxAttendees">Max attendees</label>
+            <input
+              id="maxAttendees"
+              type="number"
+              min="1"
+              step="1"
+              value={maxAttendees}
+              onChange={(e) => setMaxAttendees(e.target.value)}
+              placeholder="Optional"
             />
           </div>
         </div>
