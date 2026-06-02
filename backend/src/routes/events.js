@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllEvents, getEventById, createEvent, createEventRsvp } from '../services/eventsService.js';
+import { getAllEvents, getEventById, createEvent, createEventRsvp, getUserRsvps } from '../services/eventsService.js';
 import { isSupabaseConfigured } from '../config/supabase.js';
 import { validateEventBody } from '../utils/validateEvent.js';
 import { validateEventId } from '../utils/validateEventId.js';
@@ -25,7 +25,15 @@ router.get('/', async (_req, res) => {
   if (!requireSupabase(res)) return;
   try {
     const events = await getAllEvents();
-    res.json({ events });
+    const userRsvps = await getUserRsvps('01d186e7-a62c-4298-8ee0-c12c02c08cd7'); 
+
+    const rsvpedEventIds = new Set(userRsvps.map(rsvp => rsvp.event_id));
+    const eventsWithRsvpStatus = events.map(event => ({
+      ...event,
+      is_rsvpd: rsvpedEventIds.has(event.id),
+    }));
+    
+    res.json({ eventsWithRsvpStatus });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
