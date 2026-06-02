@@ -7,7 +7,7 @@ export function validateEventBody(body) {
     return { ok: false, error: 'Request body must be a JSON object' };
   }
 
-  const { title, description, date, time, location, sport } = body;
+  const { title, description, starts_at, ends_at, location, sport, max_attendees } = body;
 
   if (!title || typeof title !== 'string' || !title.trim()) {
     return { ok: false, error: 'title is required' };
@@ -15,23 +15,19 @@ export function validateEventBody(body) {
   if (!description || typeof description !== 'string' || !description.trim()) {
     return { ok: false, error: 'description is required' };
   }
-  if (!date || typeof date !== 'string') {
-    return { ok: false, error: 'date is required' };
-  }
-  if (!time || typeof time !== 'string') {
-    return { ok: false, error: 'time is required' };
-  }
+  //TODO validation for starts_at, ends_at
 
   return {
     ok: true,
     data: {
-      id: '01d186e7-a62c-4298-8ee0-c12c02c08cd7', //Test UUID
+      host_id: '01d186e7-a62c-4298-8ee0-c12c02c08cd7', //Test UUID
       title: title.trim(),
       description: description.trim(),
-      date,
-      time,
+      starts_at: starts_at, 
+      ends_at: ends_at,
       location: typeof location === 'string' ? location.trim() : '',
-      sport: typeof sport === 'string' ? sport.trim() : ''
+      sport: typeof sport === 'string' ? sport.trim() : '', 
+      max_attendees: max_attendees
     },
   };
 }
