@@ -8,9 +8,6 @@ export default function NavBar() {
     <nav className="nav-bar">
       <span className="nav-brand">Sports Connect</span>
       <div className="nav-links">
-        <NavLink to="/login" className={linkClass}>
-          Login
-        </NavLink>
         <NavLink to="/feed" className={linkClass}>
           Feed
         </NavLink>

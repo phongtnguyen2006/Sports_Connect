@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../api/users";
 import './Registration.css';
 
 
@@ -50,18 +51,7 @@ export default function Registration() {
     setLoading(true);
 
     try{
-      const response = await fetch("/api/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      });
-      const data = await response.json();
-
-      if(!response.ok){
-        throw new Error(data.error || "registration failed");
-      }
+      const data = await registerUser(formData);
       console.log("Registration succesful:", data);
       if (data.session?.access_token) {
         localStorage.setItem("access_token", data.session.access_token);

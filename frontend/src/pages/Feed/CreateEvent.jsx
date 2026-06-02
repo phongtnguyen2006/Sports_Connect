@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createEvent } from '../api/events';
+import { createEvent } from '../../api/events';
 import './CreateEvent.css';
 
 export default function CreateEvent() {

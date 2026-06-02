@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { completeProfile } from "../../api/users";
 import "./CompleteProfile.css";
 
 
@@ -89,21 +90,7 @@ function CompleteProfile() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/users/complete-profile", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(profileData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "profile completion failed");
-      }
-
+      await completeProfile(profileData, token);
       navigate("/feed");
     } catch (err) {
       setError(err.message);
