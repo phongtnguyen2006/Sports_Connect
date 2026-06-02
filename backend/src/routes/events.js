@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { getAllEvents, createEvent } from '../services/eventsService.js';
+import { getAllEvents, getEventById, createEvent, createEventRsvp } from '../services/eventsService.js';
 import { isSupabaseConfigured } from '../config/supabase.js';
 import { validateEventBody } from '../utils/validateEvent.js';
+import { validateEventId } from '../utils/validateEventId.js';
 
 /**
  * Events use case — backed by the Supabase `events` table.
@@ -44,6 +45,25 @@ router.post('/', async (req, res) => {
     res.status(201).json({ event });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/events/:id/rsvp
+
+router.post('/:id/rsvp', async(req, res) => {
+  if (!requireSupabase(res)) return; 
+
+  const idStatus = validateEventId(req.params.id); 
+  if (!idStatus.ok) {
+    return res.status(400).json({ error: idStatus.error });
+  }
+
+  try {
+    const event = await getEventById(idStatus.data); 
+    const eventRsvp = await createEventRsvp(event); 
+    res.status(201).json( {eventRsvp} );
+  } catch (err) {
+    res.status(500).json({ error: err.message });;
   }
 });
 
