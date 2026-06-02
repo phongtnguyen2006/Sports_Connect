@@ -33,7 +33,10 @@ router.get('/:username', async (req, res) => {
   res.json({ profile: data });
 });
 
-// GET /api/users/register
+
+
+
+// POST /api/users/register
 router.post("/register", async(req,res) => {
   //create/register user
   if (!isSupabaseConfigured()) {

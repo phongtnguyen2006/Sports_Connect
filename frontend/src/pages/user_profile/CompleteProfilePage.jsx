@@ -19,7 +19,7 @@ const sportsOptions = [
   "Cycling",
 ];
 
-function CompleteProfile() {
+function CompleteProfile({setCurrentUser}) {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
@@ -91,6 +91,8 @@ function CompleteProfile() {
 
     setLoading(true);
 
+
+
     try {
       await completeProfile(
         {
@@ -99,6 +101,23 @@ function CompleteProfile() {
         },
         token
       );
+
+      const userDataResponse = await fetch("/api/users/user-data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const userData = await userDataResponse.json();
+
+      if (!userDataResponse.ok) {
+        throw new Error(userData.error || "Could not load user data");
+      }
+
+      setCurrentUser(userData.user);
+
+
       
       navigate("/feed");
     } catch (err) {

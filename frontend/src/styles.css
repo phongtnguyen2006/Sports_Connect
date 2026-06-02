@@ -47,6 +47,27 @@ body {
   background: #e94560;
 }
 
+.nav-button {
+  font-family: inherit;
+}
+
+.nav-user {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.auth-loading {
+  margin: 3rem auto;
+  text-align: center;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 main {
   max-width: 640px;
   margin: 2rem auto;
