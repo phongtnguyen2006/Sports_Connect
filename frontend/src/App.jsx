@@ -38,16 +38,17 @@ export default function App() {
       </Route>
 
       {/* Authenticated app — nav bar + feed, gated behind login */}
-      <Route element={<ProtectedLayout />}>
+      <Route element={<ProtectedLayout currentUser={currentUser}/>}>
         <Route path="/feed" element={<Feed />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit-profile" element={<EditProfile />} />
-        <Route
-          path="/registration/complete-profile"
-          element={<CompleteRegistration />}
-        />
+
       </Route>
+      <Route
+          path="/registration/complete-profile"
+          element={<CompleteRegistration setCurrentUser = {setCurrentUser} />}
+      />
 
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />

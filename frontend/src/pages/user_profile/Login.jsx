@@ -34,17 +34,19 @@ export default function Login({setCurrentUser}) {
         localStorage.setItem("access_token", data.session.access_token);
       }
 
-      const userDataResponse = await fetch ("/api/users/user-data", {
+      const userDataResponse = await fetch("/api/users/user-data", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${data.session.access_token}`,
         },
-
       });
+
+      const userData = await userDataResponse.json();
+
       if (!userDataResponse.ok) {
         throw new Error(userData.error || "Could not load user data");
       }
-      const userData = await userDataResponse.json();
+
       setCurrentUser(userData.user);
 
       navigate("/feed");
