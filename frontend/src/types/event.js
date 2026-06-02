@@ -10,6 +10,7 @@
  * @property {string|null} sport
  * @property {number|null} max_attendees
  * @property {string} created_at - ISO timestamp
+ * @property {bool} is_rsvpd
  */
 
 export {};
