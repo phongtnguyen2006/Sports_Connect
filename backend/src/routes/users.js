@@ -1,11 +1,17 @@
 import { Router } from 'express';
-import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
+import { getSupabase, getSupabaseAdmin, isSupabaseConfigured } from '../config/supabase.js';
+import multer from 'multer';
 
 /**
  * Users / profile use case. Mounted at /api/users.
  * Reads from the `profiles` table created in DATABASE_SETUP.txt.
  */
 const router = Router();
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+})
 
 // GET /api/users/:username
 router.get('/:username', async (req, res) => {
@@ -127,8 +133,8 @@ router.post("/login", async (req, res) => {
   });
 });
 
-// Patch /api/users/register/complete-profile
-router.patch('/complete-profile', async (req, res) => {
+// PATCH /api/users/register/complete-profile
+router.patch('/complete-profile', upload.single('profileImage'), async (req, res) => {
 
   if (!isSupabaseConfigured()) {
     return res
@@ -137,8 +143,12 @@ router.patch('/complete-profile', async (req, res) => {
   }
 
   const supabase = getSupabase();
+  const supabaseAdmin = getSupabaseAdmin();
+
+
   const authHeader = req.headers.authorization;
   const token = authHeader?.replace("Bearer ", "");
+ 
   if(!token){
     return res.status(401).json({error:"Missing auth token"});
   }
@@ -149,7 +159,7 @@ router.patch('/complete-profile', async (req, res) => {
 
   if(error){
     return res.status(401).json({
-      error: result.error.message
+      error: error.message
     });
   }
 
@@ -159,17 +169,62 @@ router.patch('/complete-profile', async (req, res) => {
   const username = req.body.username;
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
-  const favorite_sports = req.body.favoriteSports;
+  const favorite_sports = JSON.parse(req.body.favoriteSports || "[]");
+  //const profileResult = await supabase
 
-  const profileResult = await supabase
-  .from("users")
-  .update({
-    firstName: firstName,
-    lastName:  lastName,
-    username:  username,
-    favorite_sports:favorite_sports
-  })
-  .eq("id",userId);
+  let profileImageUrl = null;
+
+  // If user uploaded a profile image, store it in Supabase Storage
+  if (req.file) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      return res.status(400).json({
+        error: "Invalid file type. Please upload a JPEG, PNG, or WebP image."
+      });
+    }
+
+  const fileExtension = req.file.originalname.split('.').pop();
+
+  // File path that is uploaded to Supabase Storage, using user ID and timestamp to ensure uniqueness
+  // Exmple: "userId/profile-123456789.jpg"
+  const filePath = `${userId}/profile-${Date.now()}.${fileExtension}`;
+
+  const { error: uploadError } = await supabaseAdmin.storage
+    .from("profile-images")
+    .upload(filePath, req.file.buffer, {
+      contentType: req.file.mimetype,
+      upsert: false, // Overwrite existing file if it exists
+    });
+  
+  if (uploadError) {
+    return res.status(500).json({
+      error: "Failed to upload profile image: " + uploadError.message
+    });
+  }
+
+  const { data: publicUrlData } = supabaseAdmin.storage
+    .from('profile-images')
+    .getPublicUrl(filePath); 
+
+  profileImageUrl = publicUrlData.publicUrl;
+}
+
+const updateData = {
+  firstName: firstName,
+  lastName:  lastName,
+  username:  username,
+  favorite_sports:favorite_sports
+};
+
+if (profileImageUrl){
+  updateData.profile_image = profileImageUrl;
+}
+
+  const profileResult = await supabaseAdmin
+    .from("users")
+    .update(updateData)
+    .eq("id",userId);
 
   if(profileResult.error){
     return res.status(500).json({
@@ -178,8 +233,9 @@ router.patch('/complete-profile', async (req, res) => {
   }
 
   return res.status(200).json({
-    message:"Signup worked"
-  })
+    message:"Signup worked",
+    profile_image: profileImageUrl
+  });
 
 });
 export default router;
