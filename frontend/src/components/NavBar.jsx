@@ -8,6 +8,7 @@ export default function NavBar({currentUser}) {
     <nav className="nav-bar">
       <span className="nav-brand">Sports Connect</span>
       <div className="nav-links">
+
         {currentUser ? (
           <span className="nav-user">{currentUser.username}</span>
         ) : (
@@ -15,6 +16,8 @@ export default function NavBar({currentUser}) {
             Login
           </NavLink>
         )}
+
+
         <NavLink to="/feed" className={linkClass}>
           Feed
         </NavLink>

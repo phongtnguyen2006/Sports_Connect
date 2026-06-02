@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import NavBar from './components/NavBar';
-import CreateEvent from './pages/CreateEvent';
-import Feed from './pages/Feed';
+import ProtectedLayout from './components/ProtectedLayout';
+import PublicRoute from './components/PublicRoute';
+import CreateEvent from './pages/Feed/CreateEvent';
+import Feed from './pages/Feed/Feed';
 import Login from './pages/user_profile/Login';
 import Profile from './pages/user_profile/Profile';
 import EditProfile from './pages/user_profile/EditProfile';
@@ -29,19 +30,27 @@ export default function App() {
 
   }, []);
   return (
-    <>
-      <NavBar currentUser={currentUser}/>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+    <Routes>
+      {/* Public auth screens — no nav bar, redirect away once logged in */}
+      <Route element={<PublicRoute />}>
         <Route path="/login" element={<Login setCurrentUser = {setCurrentUser}/>} />
+        <Route path="/Registration" element={<Registration />} />
+      </Route>
+
+      {/* Authenticated app — nav bar + feed, gated behind login */}
+      <Route element={<ProtectedLayout />}>
         <Route path="/feed" element={<Feed />} />
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit-profile" element={<EditProfile />} />
-        <Route path="/Registration" element={<Registration/>} />
-        <Route path="/registration/complete-profile" element={<CompleteRegistration/>} />
+        <Route
+          path="/registration/complete-profile"
+          element={<CompleteRegistration />}
+        />
+      </Route>
 
-      </Routes>
-    </>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 }

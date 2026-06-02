@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../api/users";
 import "./Login.css";
 
 export default function Login({setCurrentUser}) {
@@ -27,19 +28,7 @@ export default function Login({setCurrentUser}) {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
-      }
+      const data = await loginUser(formData);
 
       if (data.session?.access_token) {
         localStorage.setItem("access_token", data.session.access_token);

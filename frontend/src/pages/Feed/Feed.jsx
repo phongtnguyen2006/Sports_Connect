@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchEvents } from '../api/events';
-import EventCard from '../components/EventCard';
+import { fetchEvents } from '../../api/events';
+import EventCard from '../../components/EventCard';
 import './Feed.css';
 
-/** @typedef {import('../types/event.js').Event} Event */
+/** @typedef {import('../../types/event.js').Event} Event */
 
 export default function Feed() {
   const [events, setEvents] = useState(/** @type {Event[]} */ ([]));

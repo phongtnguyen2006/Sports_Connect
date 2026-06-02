@@ -1,0 +1,20 @@
+import { Navigate, Outlet } from 'react-router-dom';
+import NavBar from './NavBar';
+import { isAuthenticated } from '../utils/auth';
+
+/**
+ * Layout for authenticated screens. Renders the NavBar and the matched
+ * child route. Visitors without an access token are redirected to /login.
+ */
+export default function ProtectedLayout() {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <>
+      <NavBar />
+      <Outlet />
+    </>
+  );
+}

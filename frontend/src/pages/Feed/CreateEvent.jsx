@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createEvent } from '../api/events';
+import { createEvent } from '../../api/events';
 import './CreateEvent.css';
 
 export default function CreateEvent() {
@@ -11,7 +11,6 @@ export default function CreateEvent() {
   const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
   const [sport, setSport] = useState('');
-  const [hostUsername, setHostUsername] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(/** @type {string | null} */ (null));
 
@@ -27,8 +26,7 @@ export default function CreateEvent() {
         date,
         time,
         location,
-        sport,
-        hostUsername,
+        sport
       });
       navigate('/feed');
     } catch (err) {
@@ -118,17 +116,6 @@ export default function CreateEvent() {
               value={sport}
               onChange={(e) => setSport(e.target.value)}
               placeholder="e.g. Basketball"
-            />
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="hostUsername">Host username</label>
-            <input
-              id="hostUsername"
-              type="text"
-              value={hostUsername}
-              onChange={(e) => setHostUsername(e.target.value)}
-              placeholder="e.g. johndoe"
             />
           </div>
         </div>
