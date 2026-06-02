@@ -34,6 +34,19 @@ export async function getAllEvents() {
   return data.map(toEvent);
 }
 
+
+export async function getEventById(id) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase.from('events')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) throw error;
+  console.log(data);
+  return data;
+}
+
 /**
  * @param {Record<string, any>} input - validated event fields
  * @returns {Promise<import('../models/event.js').Event>}
