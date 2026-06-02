@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
-import CreateEvent from './pages/CreateEvent';
-import Feed from './pages/Feed';
+import CreateEvent from './pages/Feed/CreateEvent';
+import Feed from './pages/Feed/Feed';
 import Login from './pages/user_profile/Login';
 import Profile from './pages/user_profile/Profile';
 import EditProfile from './pages/user_profile/EditProfile';
