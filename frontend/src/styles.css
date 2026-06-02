@@ -56,6 +56,14 @@ body {
   font-weight: 700;
 }
 
+.auth-loading {
+  margin: 3rem auto;
+  text-align: center;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 main {
   max-width: 640px;
   margin: 2rem auto;

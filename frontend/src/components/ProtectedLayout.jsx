@@ -6,7 +6,11 @@ import { isAuthenticated } from '../utils/auth';
  * Layout for authenticated screens. Renders the NavBar and the matched
  * child route. Visitors without an access token are redirected to /login.
  */
-export default function ProtectedLayout({ currentUser }) {
+export default function ProtectedLayout({ currentUser, authLoading }) {
+  if (authLoading) {
+    return <p className="auth-loading">Loading...</p>;
+  }
+
   if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
