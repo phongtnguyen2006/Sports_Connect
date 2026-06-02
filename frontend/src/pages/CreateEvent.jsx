@@ -33,7 +33,7 @@ export default function CreateEvent() {
       await createEvent({
         title,
         description,
-        start_at: startAt,
+        starts_at: startAt,
         ends_at: endsAt || null,
         max_attendees: parsedMaxAttendees,
         location,
