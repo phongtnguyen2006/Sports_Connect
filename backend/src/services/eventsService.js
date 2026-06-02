@@ -20,6 +20,7 @@ function toEvent(row) {
   };
 }
 
+
 /**
  * @returns {Promise<import('../models/event.js').Event[]>}
  */
@@ -44,7 +45,7 @@ export async function getEventById(id) {
 
   if (error) throw error;
   console.log(data);
-  return data;
+  return toEvent(data);
 }
 
 /**
@@ -71,4 +72,20 @@ export async function createEvent(input) {
 
   if (error) throw error;
   return toEvent(data);
+}
+
+export async function createEventRsvp(event) {
+  const supabase = getSupabase(); 
+
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .insert({
+      event_id: event.id,
+      user_id: '01d186e7-a62c-4298-8ee0-c12c02c08cd7'
+    })
+    .select()
+    .single();
+
+  if (error) throw error; 
+  return data; 
 }
