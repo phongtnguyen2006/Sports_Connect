@@ -1,4 +1,5 @@
 import { getSupabase } from '../config/supabase.js';
+import { datetimeLocalToTimestamptz } from '../utils/datetimeLocalToTimestamptz.js';
 
 /**
  * Maps a Supabase `events` row (snake_case columns) to the API shape
@@ -41,16 +42,18 @@ export async function getAllEvents() {
  */
 export async function createEvent(input) {
   const supabase = getSupabase();
+
   const { data, error } = await supabase
     .from('events')
     .insert({
-      id: input.id, 
+      host_id: input.host_id, 
       title: input.title,
       description: input.description,
-      date: input.date,
-      time: input.time,
+      starts_at: datetimeLocalToTimestamptz(input.starts_at), 
+      ends_at: datetimeLocalToTimestamptz(input.ends_at) || null, 
       location: input.location || null,
-      sport: input.sport || null
+      sport: input.sport || null, 
+      max_attendees: input.max_attendees
     })
     .select()
     .single();
