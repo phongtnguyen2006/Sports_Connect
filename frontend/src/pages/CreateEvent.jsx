@@ -7,7 +7,7 @@ export default function CreateEvent() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [startAt, setStartAt] = useState('');
+  const [startsAt, setStartsAt] = useState('');
   const [endsAt, setEndsAt] = useState('');
   const [maxAttendees, setMaxAttendees] = useState('');
   const [location, setLocation] = useState('');
@@ -32,12 +32,12 @@ export default function CreateEvent() {
 
       await createEvent({
         title,
-        description,
-        starts_at: startAt,
+        description: description || null,
+        starts_at: startsAt,
         ends_at: endsAt || null,
         max_attendees: parsedMaxAttendees,
-        location,
-        sport
+        location: location || null,
+        sport: sport || null
       });
       navigate('/feed');
     } catch (err) {
@@ -79,7 +79,6 @@ export default function CreateEvent() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
-            required
           />
         </div>
 
@@ -89,8 +88,8 @@ export default function CreateEvent() {
             <input
               id="startAt"
               type="datetime-local"
-              value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
+              value={startsAt}
+              onChange={(e) => setStartsAt(e.target.value)}
               required
             />
           </div>
