@@ -7,6 +7,43 @@ import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
  */
 const router = Router();
 
+router.get('/user-data', async(req,res) => {
+  if(!isSupabaseConfigured()){
+    return res.status(503)
+    .json({error: 'Supabase not conifgure. See DataBase_SETUP.txt.'});
+  }
+
+  const supabase = getSupabase();
+
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.replace("Bearer ", "");
+
+  if(!token){
+    return res.status(401).json({error: "Missing auth token"});
+  }
+  const result = await supabase.auth.getUser(token);
+
+  if(result.error){
+    return res.status(401).json({error: result.error.message});
+  }
+
+  const userId = result.data.user.id;
+
+  const { data,error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id",userId)
+    .maybeSingle();
+  if(error){
+    return res.status(500).json({error: "Profile not fouund"});
+  }
+
+  return res.json({user:data});
+
+});
+
+
+
 // GET /api/users/:username
 router.get('/:username', async (req, res) => {
   if (!isSupabaseConfigured()) {
@@ -27,7 +64,10 @@ router.get('/:username', async (req, res) => {
   res.json({ profile: data });
 });
 
-// GET /api/users/register
+
+
+
+// POST /api/users/register
 router.post("/register", async(req,res) => {
   //create/register user
   if (!isSupabaseConfigured()) {

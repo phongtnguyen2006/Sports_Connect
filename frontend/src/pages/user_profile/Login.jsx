@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-export default function Login() {
+export default function Login({setCurrentUser}) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -44,6 +44,19 @@ export default function Login() {
       if (data.session?.access_token) {
         localStorage.setItem("access_token", data.session.access_token);
       }
+
+      const userDataResponse = await fetch ("/api/users/user-data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${data.session.access_token}`,
+        },
+
+      });
+      if (!userDataResponse.ok) {
+        throw new Error(userData.error || "Could not load user data");
+      }
+      const userData = await userDataResponse.json();
+      setCurrentUser(userData.user);
 
       navigate("/feed");
     } catch (err) {
