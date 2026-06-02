@@ -40,13 +40,23 @@ export async function registerUser(credentials) {
  * @returns {Promise<object>}
  */
 export async function completeProfile(profileData, token) {
+  const formData = new FormData();
+
+  formData.append('firstName', profileData.firstName);
+  formData.append('lastName', profileData.lastName);  
+  formData.append("username", profileData.username);
+  formData.append("favoriteSports", JSON.stringify(profileData.favoriteSports));
+
+  if (profileData.profileImage) {
+    formData.append('profileImage', profileData.profileImage);
+  }
+  
   const response = await fetch('/api/users/complete-profile', {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(profileData),
+    body: formData,
   });
 
   const data = await response.json().catch(() => ({}));

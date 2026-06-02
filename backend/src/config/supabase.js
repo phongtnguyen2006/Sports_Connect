@@ -12,11 +12,29 @@ const secretKey = process.env.SUPABASE_SECRET_KEY;
  * @type {import('@supabase/supabase-js').SupabaseClient | null}
  */
 let supabase = null;
+let supabaseAdmin = null;
 
 if (url && secretKey) {
   supabase = createClient(url, secretKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
+    auth: { 
+      persistSession: false, 
+      autoRefreshToken: false 
+    },
   });
+
+  // Admin client for storage/table writes that should bypass RLS
+  supabaseAdmin = createClient(url, secretKey, {
+    global: {
+        headers: {
+            Authorization: `Bearer ${secretKey}`,
+        },
+    },
+    auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+        },
+    });
 } else {
   console.warn(
     '[supabase] SUPABASE_URL or SUPABASE_SECRET_KEY missing — ' +
@@ -28,7 +46,7 @@ if (url && secretKey) {
  * @returns {boolean} whether the Supabase client is ready to use
  */
 export function isSupabaseConfigured() {
-  return supabase !== null;
+  return supabase !== null && supabaseAdmin !== null;
 }
 
 /**
@@ -43,4 +61,15 @@ export function getSupabase() {
     );
   }
   return supabase;
+}
+
+export function getSupabaseAdmin() {
+  if (!supabaseAdmin) {
+    throw new Error(
+      'Supabase admin client is not configured. Fill in SUPABASE_URL and ' +
+        'SUPABASE_SECRET_KEY in backend/.env. See DATABASE_SETUP.txt.'
+    );
+  }
+
+  return supabaseAdmin;
 }

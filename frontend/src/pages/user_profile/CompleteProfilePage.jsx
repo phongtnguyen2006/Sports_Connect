@@ -26,7 +26,7 @@ function CompleteProfile({setCurrentUser}) {
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [profileImage, setProfileImage] = useState(null);
   const [profileData, setProfileData] = useState({
     firstName: "",
     lastName: "",
@@ -38,6 +38,8 @@ function CompleteProfile({setCurrentUser}) {
     const file = event.target.files[0];
 
     if (file) {
+      setProfileImage(file);
+
       const previewUrl = URL.createObjectURL(file);
       setImageUrl(previewUrl);
     }
@@ -92,7 +94,13 @@ function CompleteProfile({setCurrentUser}) {
 
 
     try {
-      await completeProfile(profileData, token);
+      await completeProfile(
+        {
+          ...profileData,
+          profileImage,
+        },
+        token
+      );
 
       const userDataResponse = await fetch("/api/users/user-data", {
         method: "GET",
@@ -109,6 +117,8 @@ function CompleteProfile({setCurrentUser}) {
 
       setCurrentUser(userData.user);
 
+
+      
       navigate("/feed");
     } catch (err) {
       setError(err.message);
@@ -144,7 +154,7 @@ function CompleteProfile({setCurrentUser}) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image//png, image/jpeg, image/webp"
             onChange={handleImageUpload}
             hidden
           />

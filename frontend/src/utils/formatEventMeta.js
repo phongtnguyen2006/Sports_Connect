@@ -1,41 +1,37 @@
 /**
- * @param {string} date - YYYY-MM-DD
- * @param {string} time - HH:mm
- * @param {string} location
+ * @param {string} startsAt - ISO timestamp
+ * @param {string|null} endsAt - ISO timestamp
+ * @param {string|null} location
  * @returns {string}
  */
-export function formatEventMeta(date, time, location) {
+export function formatEventMeta(startsAt, endsAt, location) {
   const parts = [];
 
-  if (date) {
-    const parsed = new Date(`${date}T00:00:00`);
-    if (!Number.isNaN(parsed.getTime())) {
-      parts.push(
-        parsed.toLocaleDateString(undefined, {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        })
-      );
-    } else {
-      parts.push(date);
-    }
-  }
+  const startsAtDate = new Date(startsAt);
+  if (!Number.isNaN(startsAtDate.getTime())) {
+    parts.push(
+      startsAtDate.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    );
 
-  if (time) {
-    const [hours, minutes] = time.split(':').map(Number);
-    if (!Number.isNaN(hours) && !Number.isNaN(minutes)) {
-      const dt = new Date();
-      dt.setHours(hours, minutes, 0, 0);
-      parts.push(
-        dt.toLocaleTimeString(undefined, {
+    const timeLabel = [startsAtDate, endsAt ? new Date(endsAt) : null]
+      .filter((date) => date && !Number.isNaN(date.getTime()))
+      .map((date) =>
+        date.toLocaleTimeString(undefined, {
           hour: 'numeric',
           minute: '2-digit',
         })
-      );
-    } else {
-      parts.push(time);
+      )
+      .join(' - ');
+
+    if (timeLabel) {
+      parts.push(timeLabel);
     }
+  } else if (startsAt) {
+    parts.push(startsAt);
   }
 
   if (location) {
