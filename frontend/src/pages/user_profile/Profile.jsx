@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import { getCurrentUserProfile } from "../../api/users";
 import "./Profile.css";
 import {Link} from "react-router-dom";
-import { fetchMyEvents } from "../../api/events";
+import { fetchMyEvents, fetchMyRsvps } from "../../api/events";
+
+
 
 function Profile() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [myEvents, setMyEvents] = useState([]);
+  const [eventsJoined, setEventsJoined] = useState(0);
 
   useEffect(() => {
     async function loadProfile() {
@@ -26,6 +29,9 @@ function Profile() {
 
         const events = await fetchMyEvents(token);
         setMyEvents(events);
+
+        const rsvpData  = await fetchMyRsvps(token);
+        setEventsJoined(rsvpData.count);
 
       } catch (err) {
         setError(err.message);
@@ -102,7 +108,7 @@ function Profile() {
             <span>Connections</span>
           </div>
           <div>
-            <strong>7</strong>
+            <strong>{eventsJoined}</strong>
             <span>Events Joined</span>
           </div>
         </div>

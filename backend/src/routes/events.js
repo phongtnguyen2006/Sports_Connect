@@ -60,6 +60,27 @@ router.get('/my-events', async (req, res) => {
   }
 });
 
+//GET /api/events/my-rsvps
+router.get('/my-rsvps', async (req, res) => {
+  if (!requireSupabase(res)) return;
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  try {
+    const rsvps = await getUserRsvps(user.id);
+
+    res.json({ 
+      rsvps,
+      count: rsvps.length,
+   });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // GET /api/events
 router.get('/', async (req, res) => {
   if (!requireSupabase(res)) return;
