@@ -31,3 +31,39 @@ export async function createEvent(payload) {
   const data = await response.json();
   return data.event;
 }
+
+/**
+ * @param {number} eventId
+ * @returns {Promise<Record<string, any>>}
+ */
+export async function createEventRsvp(eventId) {
+  const response = await fetch(`/api/events/${eventId}/rsvp`, {
+    method: 'POST',
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error ?? 'Failed to RSVP');
+  }
+
+  const data = await response.json();
+  return data.eventRsvp;
+}
+
+/**
+ * @param {number} eventId
+ * @returns {Promise<Record<string, any>>}
+ */
+export async function deleteEventRsvp(eventId) {
+  const response = await fetch(`/api/events/${eventId}/rsvp`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error ?? 'Failed to remove RSVP');
+  }
+
+  const data = await response.json();
+  return data.eventRsvp;
+}
