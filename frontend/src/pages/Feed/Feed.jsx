@@ -41,9 +41,22 @@ export default function Feed() {
 
   function handleRsvpChange(eventId, isRsvpd) {
     setEvents((currentEvents) =>
-      currentEvents.map((event) =>
-        event.id === eventId ? { ...event, is_rsvpd: isRsvpd } : event
-      )
+      currentEvents.map((event) => {
+        if (event.id !== eventId) {
+          return event;
+        }
+
+        const rsvpDelta = isRsvpd ? 1 : -1;
+        const rsvpCount = Math.max(0, event.rsvp_count + rsvpDelta);
+
+        return {
+          ...event,
+          is_rsvpd: isRsvpd,
+          rsvp_count: rsvpCount,
+          is_full:
+            event.max_attendees !== null && rsvpCount >= event.max_attendees,
+        };
+      })
     );
   }
 
