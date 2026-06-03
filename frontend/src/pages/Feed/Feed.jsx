@@ -10,6 +10,7 @@ export default function Feed() {
   const [events, setEvents] = useState(/** @type {Event[]} */ ([]));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(/** @type {string | null} */ (null));
+  const [selectedCommentEvent, setSelectedCommentEvent] = useState(/** @type {Event | null} */(null));
 
   useEffect(() => {
     let cancelled = false;
@@ -60,6 +61,10 @@ export default function Feed() {
     );
   }
 
+  function handleCommentClick(event) {
+    setSelectedCommentEvent(event);
+  }
+
   return (
     <main className="feed-page">
       <header className="feed-header">
@@ -99,7 +104,12 @@ export default function Feed() {
       {!loading && !error && events.length > 0 ? (
         <section className="events-grid" aria-label="Upcoming events">
           {events.map((event) => (
-            <EventCard key={event.id} event={event} onRsvpChange={handleRsvpChange} />
+            <EventCard key={event.id} 
+              event={event} 
+              onRsvpChange={handleRsvpChange} 
+              onCommentClick={handleCommentClick} 
+              isCommentSelected={selectedCommentEvent?.id === event.id}
+            />
           ))}
         </section>
       ) : null}
