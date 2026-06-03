@@ -38,6 +38,15 @@ export default function Feed() {
       cancelled = true;
     };
   }, []);
+
+  function handleRsvpChange(eventId, isRsvpd) {
+    setEvents((currentEvents) =>
+      currentEvents.map((event) =>
+        event.id === eventId ? { ...event, is_rsvpd: isRsvpd } : event
+      )
+    );
+  }
+
   return (
     <main className="feed-page">
       <header className="feed-header">
@@ -77,7 +86,7 @@ export default function Feed() {
       {!loading && !error && events.length > 0 ? (
         <section className="events-grid" aria-label="Upcoming events">
           {events.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCard key={event.id} event={event} onRsvpChange={handleRsvpChange} />
           ))}
         </section>
       ) : null}
