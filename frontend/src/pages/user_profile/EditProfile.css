@@ -92,3 +92,70 @@
   color: #dc2626;
   font-weight: 700;
 }
+
+.favorite-sports-section {
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 24px;
+}
+
+.favorite-sports-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-weight: 700;
+  color: #172033;
+}
+
+.favorite-sports-header span {
+  color: #64748b;
+  font-size: 15px;
+}
+
+.sports-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sport-option {
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: white;
+  color: #172033;
+  padding: 9px 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sport-option:hover {
+  border-color: #2563eb;
+}
+
+.sport-option.selected {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+
+.edit-profile-page .profile-name {
+  font-size: 16px;
+  line-height: normal;
+}
+
+.edit-profile-page .profile-name div,
+.edit-profile-page .username div,
+.edit-profile-page .Bio div {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.edit-profile-page .profile-name input,
+.edit-profile-page .username input,
+.edit-profile-page .Bio input {
+  font-size: 16px;
+}

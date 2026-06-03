@@ -87,6 +87,7 @@ export async function getUserRsvps(userId) {
   return data;
 }
 
+
 /**
  * Finds all RSVP records for an event.
  *
@@ -232,4 +233,31 @@ export async function deleteEventRsvp(eventId, userId) {
 
     if (error) throw error; 
     return data; 
+}
+
+/**
+ * Finds all events the user has RSVP'd to.
+ *
+ * @param {string} userId
+ * @returns {Promise<import('../models/event.js').Event[]>}
+ */
+export async function getJoinedEventsByUserId(userId) {
+  const supabase = getSupabase();
+
+  const rsvps = await getUserRsvps(userId);
+  const eventIds = rsvps.map((rsvp) => rsvp.event_id);
+
+  if (eventIds.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .in("id", eventIds)
+    .order("starts_at", { ascending: true });
+
+  if (error) throw error;
+
+  return data.map(toEvent);
 }

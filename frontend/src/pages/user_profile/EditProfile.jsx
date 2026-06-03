@@ -4,7 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { completeProfile, getCurrentUserProfile } from "../../api/users";
 import "./EditProfile.css";
 
-
+const SPORT_OPTIONS = [
+  "Basketball",
+  "Soccer",
+  "Tennis",
+  "Volleyball",
+  "Football",
+  "Baseball",
+  "Running",
+  "Swimming",
+  "Golf",
+  "Pickleball",
+  "Badminton",
+  "Cycling",
+];
 
 function EditProfile(){
     const navigate = useNavigate();
@@ -12,7 +25,6 @@ function EditProfile(){
     
     const [imageUrl,setImageUrl] = useState("/images/images-2.jpeg");
     const [profileImage, setProfileImage] = useState(null);
-
     const [profileData, setProfileData] = useState({
         firstName: "",
         lastName: "",
@@ -73,6 +85,30 @@ function EditProfile(){
     }));
   }
 
+    function handleSportClick(sport) {
+    setProfileData((prevData) => {
+        const alreadySelected = prevData.favoriteSports.includes(sport);
+
+        if (alreadySelected) {
+        return {
+            ...prevData,
+            favoriteSports: prevData.favoriteSports.filter(
+            (selectedSport) => selectedSport !== sport
+            ),
+        };
+        }
+
+        if (prevData.favoriteSports.length === 3) {
+        return prevData;
+        }
+
+    return {
+      ...prevData,
+      favoriteSports: [...prevData.favoriteSports, sport],
+    };
+  });
+}
+
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
@@ -126,7 +162,7 @@ function EditProfile(){
                     type="button"
                     onClick={()=> fileInputRef.current.click()}
                 >
-                    Edit Picture
+                    Upload Picture
                 </button>
 
             </section>
@@ -183,6 +219,30 @@ function EditProfile(){
                 </div>
 
             </section>
+
+    <section className="favorite-sports-section">
+        <div className="favorite-sports-header">
+            <label>Favorite Sports</label>
+            <span>{profileData.favoriteSports.length}/3 selected</span>
+        </div>
+
+        <div className="sports-options">
+            {SPORT_OPTIONS.map((sport) => {
+                const isSelected = profileData.favoriteSports.includes(sport);
+                
+            return (
+                <button
+                    key={sport}
+                    type="button"
+                    className={isSelected ? "sport-option selected" : "sport-option"}
+                    onClick={() => handleSportClick(sport)}
+                >
+                    {sport}
+                </button>
+                );
+            })}
+        </div>
+    </section>
         <button
             className="save-profile-button"
             type="submit"

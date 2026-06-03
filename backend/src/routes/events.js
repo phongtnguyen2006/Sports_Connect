@@ -1,10 +1,20 @@
 import { Router } from 'express';
-import {getAllEvents, getEventById, getEventsByHostId, getEventRsvpCount, getRsvpCountByEventIds, getUserRsvps, createEvent, createEventRsvp, deleteEventRsvp } from '../services/eventsService.js'
-import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
+import {
+  getAllEvents,
+  getEventById,
+  getEventsByHostId,
+  getEventRsvpCount,
+  getRsvpCountByEventIds,
+  getUserRsvps,
+  getJoinedEventsByUserId,
+  createEvent,
+  createEventRsvp,
+  deleteEventRsvp,
+} from '../services/eventsService.js';
 import { validateEventBody } from '../utils/validateEvent.js';
 import { validateEventId } from '../utils/validateEventId.js';
 import { getAuthUser } from '../utils/getAuthUser.js';
-
+import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
 /**
  * Events use case — backed by the Supabase `events` table.
  * Mounted at /api/events.
@@ -80,6 +90,20 @@ router.get('/my-rsvps', async (req, res) => {
   }
 });
 
+// GET /api/events/joined-events
+router.get('/joined-events', async (req, res) => {
+  if (!requireSupabase(res)) return;
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  try {
+    const events = await getJoinedEventsByUserId(user.id);
+    res.json({ events });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // GET /api/events
 router.get('/', async (req, res) => {
@@ -138,73 +162,28 @@ router.post('/', async (req, res) => {
   }
 });
 
-// POST /api/events/:id/rsvp
-router.post('/:id/rsvp', async(req, res) => {
-  if (!requireSupabase(res)) return; 
-
-  const user = await getAuthUser(req, res); 
-  if (!user) return;
-
-  const idStatus = validateEventId(req.params.id); 
-  if (!idStatus.ok) {
-    return res.status(400).json({ error: idStatus.error });
-  }
-
-  try {
-    const event = await getEventById(idStatus.data); 
-    const eventRsvp = await createEventRsvp(event, user.id); 
-    res.status(201).json( {eventRsvp} );
-  } catch (err) {
-    res.status(500).json({ error: err.message });;
-  }
-});
-
-// DELETE /api/events/:id/rsvp
-router.delete('/:id/rsvp', async (req, res) => {
-  if (!requireSupabase(res)) return;
-
-  const user = await getAuthUser(req, res); 
-  if (!user) return;
-
-  const idStatus = validateEventId(req.params.id);
-  if (!idStatus.ok) {
-    return res.status(400).json({ error: idStatus.error });
-  }
-
-  try {
-    const eventRsvp = await deleteEventRsvp(idStatus.data, user.id);
-
-    if(!eventRsvp) {
-      return res.status(404).json({ error: 'RSVP not found' });
-    }
-
-    res.json({ eventRsvp });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // POST /api/events/:id/rsvp
 router.post('/:id/rsvp', async(req, res) => {
   if (!requireSupabase(res)) return; 
-
+  
   const user = await getAuthUser(req, res); 
   if (!user) return;
-
+  
   const idStatus = validateEventId(req.params.id); 
   if (!idStatus.ok) {
     return res.status(400).json({ error: idStatus.error });
   }
-
+  
   try {
     const event = await getEventById(idStatus.data); 
-
+    
     const rsvpCount = await getEventRsvpCount(event.id); 
-
+    
     if(event.max_attendees !== null && rsvpCount >= event.max_attendees) {
       return res.status(409).json({ error: 'Event at max capacity' });
     }
-
+    
     const eventRsvp = await createEventRsvp(event, user.id); 
     res.status(201).json( {eventRsvp} );
   } catch (err) {
@@ -236,5 +215,4 @@ router.delete('/:id/rsvp', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 export default router;

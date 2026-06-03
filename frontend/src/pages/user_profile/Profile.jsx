@@ -107,18 +107,18 @@ function Profile() {
             <strong>42</strong>
             <span>Connections</span>
           </div>
-          <div>
+          <Link className="profile-stat-link" to="/profile/joined-events">
             <strong>{eventsJoined}</strong>
             <span>Events Joined</span>
-          </div>
+          </Link>
         </div>
 
         <section className="posts-section" aria-labelledby="previous-posts">
           <div className="posts-header">
             <h2 id="previous-posts">Previous Posts</h2>
-            <button className="view-all-button" type="button">
+            <Link className="view-all-button" to="/profile/events">
               View All
-            </button>
+            </Link>
           </div>
 
           <div className="posts-grid">

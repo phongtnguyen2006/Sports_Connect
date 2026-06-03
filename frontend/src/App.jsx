@@ -9,6 +9,8 @@ import Profile from './pages/user_profile/Profile';
 import EditProfile from './pages/user_profile/EditProfile';
 import Registration from './pages/user_profile/Registration'
 import CompleteRegistration from './pages/user_profile/CompleteProfilePage'
+import UserEvents from './pages/user_profile/UserEvents';
+import JoinedEvents from './pages/user_profile/JoinedEvents';
 
 export default function App() {
   const [currentUser,setCurrentUser] = useState(null);
@@ -55,7 +57,8 @@ export default function App() {
         <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit-profile" element={<EditProfile />} />
-
+        <Route path="/profile/joined-events" element={<JoinedEvents />} />
+        <Route path="/profile/events" element={<UserEvents />} />
       </Route>
       <Route
           path="/registration/complete-profile"
