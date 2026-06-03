@@ -88,9 +88,6 @@ export default function Login({setCurrentUser}) {
             onChange={handleChange}
           />
 
-          <a className="forgot-password-link" href="#">
-            Forgot password?
-          </a>
 
           <Link className="register-instead-link" to="/Registration">
             Register instead
