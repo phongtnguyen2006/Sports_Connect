@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getAllEvents, getEventsByHostId, getEventById, createEvent, createEventRsvp, getUserRsvps, deleteEventRsvp } from '../services/eventsService.js';
-import { isSupabaseConfigured } from '../config/supabase.js';
+import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
 import { validateEventBody } from '../utils/validateEvent.js';
 import { validateEventId } from '../utils/validateEventId.js';
 import { getAuthUser } from '../utils/getAuthUser.js';
