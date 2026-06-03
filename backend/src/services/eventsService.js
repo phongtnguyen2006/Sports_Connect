@@ -57,14 +57,37 @@ export async function getEventById(id) {
   return toEvent(data);
 }
 
+/**
+ * Finds all RSVP records for a user.
+ *
+ * @param {string} userId - User id to check for RSVP'd events.
+ * @returns {Promise<Array<{ event_id: number }>>}
+ */
 export async function getUserRsvps(userId) {
-  const supabase = getSupabase(0);
+  const supabase = getSupabase();
   const { data, error } = await supabase.from('event_rsvps')
     .select('event_id')
     .eq('user_id', userId);
 
   if (error) throw error; 
   return data;
+}
+
+/**
+ * Finds all RSVP records for an event.
+ *
+ * @param {number} eventId - Event id to check for RSVP'd users.
+ * @returns {Promise<Record<string, any>[]>}
+ */
+export async function getEventRsvps(eventId) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .select('*')
+    .eq('event_id', eventId); 
+
+  if (error) throw error; 
+  return data; 
 }
 
 /**
