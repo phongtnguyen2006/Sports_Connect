@@ -1,10 +1,24 @@
 /** @typedef {import('../types/event.js').Event} Event */
 
+function getAuthHeaders(includeJson = false) {
+  const token = localStorage.getItem('access_token');
+  const headers = includeJson ? { 'Content-Type': 'application/json' } : {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+}
+
 /**
  * @returns {Promise<Event[]>}
  */
 export async function fetchEvents() {
-  const response = await fetch('/api/events');
+  const response = await fetch('/api/events', {
+    headers: getAuthHeaders(),
+  });
+
   if (!response.ok) {
     throw new Error('Failed to load events');
   }
@@ -19,7 +33,7 @@ export async function fetchEvents() {
 export async function createEvent(payload) {
   const response = await fetch('/api/events', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(true),
     body: JSON.stringify(payload),
   });
 
@@ -39,6 +53,7 @@ export async function createEvent(payload) {
 export async function createEventRsvp(eventId) {
   const response = await fetch(`/api/events/${eventId}/rsvp`, {
     method: 'POST',
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -57,6 +72,7 @@ export async function createEventRsvp(eventId) {
 export async function deleteEventRsvp(eventId) {
   const response = await fetch(`/api/events/${eventId}/rsvp`, {
     method: 'DELETE',
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
