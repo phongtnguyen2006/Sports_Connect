@@ -1,19 +1,59 @@
+import { useState } from 'react';
+import { createEventRsvp, deleteEventRsvp } from '../api/events';
 import { formatEventMeta } from '../utils/formatEventMeta';
 import './EventCard.css';
 
 /** @typedef {import('../types/event.js').Event} Event */
 
 /**
- * @param {{ event: Event }} props
+ * @param {{ event: Event, onRsvpChange: (eventId: number, isRsvpd: boolean) => void }} props
  */
-export default function EventCard({ event }) {
+export default function EventCard({ event, onRsvpChange }) {
+  const [isRsvpUpdating, setIsRsvpUpdating] = useState(false);
   const meta = formatEventMeta(event.starts_at, event.ends_at, event.location);
+
+  async function handleRsvpClick() {
+    setIsRsvpUpdating(true);
+
+    try {
+      if (event.is_rsvpd) {
+        await deleteEventRsvp(event.id);
+        onRsvpChange(event.id, false);
+      } else {
+        await createEventRsvp(event.id);
+        onRsvpChange(event.id, true);
+      }
+    } finally {
+      setIsRsvpUpdating(false);
+    }
+  }
 
   return (
     <article className="event-card">
-      {event.sport ? (
-        <span className="event-card-sport">{event.sport}</span>
-      ) : null}
+      <div className="event-card-header">
+        {event.sport ? (
+          <span className="event-card-sport">{event.sport}</span>
+        ) : null}
+        <button
+          type="button"
+          className={`event-card-rsvp-button${event.is_rsvpd ? ' is-rsvpd' : ''}`}
+          onClick={handleRsvpClick}
+          disabled={isRsvpUpdating}
+          aria-label={event.is_rsvpd ? 'Remove RSVP' : 'RSVP to event'}
+        >
+          {event.is_rsvpd ? (
+            <svg
+              aria-hidden="true"
+              className="event-card-rsvp-check"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 12.5L10 17.5L19 6.5" />
+            </svg>
+          ) : (
+            <span aria-hidden="true">+</span>
+          )}
+        </button>
+      </div>
       <p className="event-card-meta">{meta}</p>
       <h3 className="event-card-title">{event.title}</h3>
       {event.description ? (

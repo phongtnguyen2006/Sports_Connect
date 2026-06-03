@@ -1,6 +1,9 @@
 import { getSupabase } from '../config/supabase.js';
 import { datetimeLocalToTimestamptz } from '../utils/datetimeLocalToTimestamptz.js';
 
+
+const CURRENT_USER_ID = '01d186e7-a62c-4298-8ee0-c12c02c08cd7';
+
 /**
  * @param {Record<string, any>} row
  * @returns {import('../models/event.js').Event}
@@ -20,6 +23,7 @@ function toEvent(row) {
   };
 }
 
+
 /**
  * @returns {Promise<import('../models/event.js').Event[]>}
  */
@@ -32,6 +36,58 @@ export async function getAllEvents() {
 
   if (error) throw error;
   return data.map(toEvent);
+}
+
+
+/**
+ * Finds one event by its database id.
+ *
+ * @param {number} id - Validated event id from the route params.
+ * @returns {Promise<import('../models/event.js').Event>}
+ */
+export async function getEventById(id) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase.from('events')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) throw error;
+  console.log(data);
+  return toEvent(data);
+}
+
+/**
+ * Finds all RSVP records for a user.
+ *
+ * @param {string} userId - User id to check for RSVP'd events.
+ * @returns {Promise<Array<{ event_id: number }>>}
+ */
+export async function getUserRsvps(userId) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase.from('event_rsvps')
+    .select('event_id')
+    .eq('user_id', userId);
+
+  if (error) throw error; 
+  return data;
+}
+
+/**
+ * Finds all RSVP records for an event.
+ *
+ * @param {number} eventId - Event id to check for RSVP'd users.
+ * @returns {Promise<Record<string, any>[]>}
+ */
+export async function getEventRsvps(eventId) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .select('*')
+    .eq('event_id', eventId); 
+
+  if (error) throw error; 
+  return data; 
 }
 
 /**
@@ -58,4 +114,47 @@ export async function createEvent(input) {
 
   if (error) throw error;
   return toEvent(data);
+}
+
+/**
+ * Creates an RSVP row for the provided event.
+ *
+ * @param {import('../models/event.js').Event} event - Existing event being RSVP'd to.
+ * @returns {Promise<Record<string, any>>}
+ */
+export async function createEventRsvp(event) {
+  const supabase = getSupabase(); 
+
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .insert({
+      event_id: event.id,
+      user_id: CURRENT_USER_ID
+    })
+    .select()
+    .single();
+
+  if (error) throw error; 
+  return data; 
+}
+
+/**
+ * Deletes the current user's RSVP for the provided event id.
+ *
+ * @param {number} eventId - Validated event id from the route params.
+ * @returns {Promise<Record<string, any> | null>} Deleted RSVP row, or null if none existed.
+ */
+export async function deleteEventRsvp(eventId) {
+  const supabase = getSupabase(); 
+
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .delete()
+    .eq('event_id', eventId)
+    .eq('user_id', CURRENT_USER_ID)
+    .select()
+    .maybeSingle(); 
+
+    if (error) throw error; 
+    return data; 
 }
