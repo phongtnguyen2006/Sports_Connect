@@ -9,9 +9,16 @@
   flex-direction: column;
 }
 
+.event-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .event-card-sport {
   align-self: flex-start;
-  margin-bottom: 12px;
   border: 1px solid #bfdbfe;
   border-radius: 6px;
   background: #eff6ff;
@@ -21,6 +28,45 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+.event-card-rsvp-button {
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  border: 2px solid #2563eb;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #2563eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.event-card-rsvp-button.is-rsvpd {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.event-card-rsvp-check {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.event-card-rsvp-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
 }
 
 .event-card-meta {

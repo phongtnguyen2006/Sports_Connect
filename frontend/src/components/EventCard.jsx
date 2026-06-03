@@ -36,11 +36,22 @@ export default function EventCard({ event, onRsvpChange }) {
         ) : null}
         <button
           type="button"
-          className="event-card-rsvp-button"
+          className={`event-card-rsvp-button${event.is_rsvpd ? ' is-rsvpd' : ''}`}
           onClick={handleRsvpClick}
           disabled={isRsvpUpdating}
+          aria-label={event.is_rsvpd ? 'Remove RSVP' : 'RSVP to event'}
         >
-          {event.is_rsvpd ? "RSVP'd" : "Not RSVP'd"}
+          {event.is_rsvpd ? (
+            <svg
+              aria-hidden="true"
+              className="event-card-rsvp-check"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 12.5L10 17.5L19 6.5" />
+            </svg>
+          ) : (
+            <span aria-hidden="true">+</span>
+          )}
         </button>
       </div>
       <p className="event-card-meta">{meta}</p>
