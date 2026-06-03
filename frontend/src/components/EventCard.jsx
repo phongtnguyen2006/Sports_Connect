@@ -11,9 +11,14 @@ export default function EventCard({ event }) {
 
   return (
     <article className="event-card">
-      {event.sport ? (
-        <span className="event-card-sport">{event.sport}</span>
-      ) : null}
+      <div className="event-card-header">
+        {event.sport ? (
+          <span className="event-card-sport">{event.sport}</span>
+        ) : null}
+        <button type="button" className="event-card-rsvp-button">
+          {event.is_rsvpd ? "RSVP'd" : "Not RSVP'd"}
+        </button>
+      </div>
       <p className="event-card-meta">{meta}</p>
       <h3 className="event-card-title">{event.title}</h3>
       {event.description ? (
