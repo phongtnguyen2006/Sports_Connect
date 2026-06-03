@@ -35,6 +35,23 @@ export async function getAllEvents() {
   return data.map(toEvent);
 }
 
+/**
+ * @param {string} hostId
+ * @returns {Promise<import('../models/event.js').Event[]>}
+ */
+export async function getEventsByHostId(hostId) {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('host_id', hostId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data.map(toEvent);
+}
+
 
 /**
  * Finds one event by its database id.
