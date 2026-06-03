@@ -30,6 +30,11 @@ export default function CreateEvent() {
         throw new Error('Max attendees must be a whole number of at least 1');
       }
 
+      const token = localStorage.getItem("access_token");
+      if (!token || token.split(".").length !== 3) {
+        throw new Error('Invalid login token. Please register or log in again.');
+      }
+
       await createEvent({
         title,
         description: description || null,
@@ -38,7 +43,9 @@ export default function CreateEvent() {
         max_attendees: parsedMaxAttendees,
         location: location || null,
         sport: sport || null
-      });
+      },
+      token
+      );
       navigate('/feed');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create event');

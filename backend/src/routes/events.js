@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getAllEvents, createEvent } from '../services/eventsService.js';
-import { isSupabaseConfigured } from '../config/supabase.js';
+import { getAllEvents, getEventsByHostId, createEvent } from '../services/eventsService.js';
+import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
 import { validateEventBody } from '../utils/validateEvent.js';
 
 /**
@@ -18,6 +18,45 @@ function requireSupabase(res) {
   }
   return true;
 }
+
+async function getUserIdFromRequest(req) {
+  const supabase = getSupabase();
+
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.replace("Bearer ", "");
+
+
+  if (
+    !token ||
+    token === "null" ||
+    token === "undefined" ||
+    token.split(".").length !== 3
+  ) {
+    throw new Error("Invalid or missing auth token. Please register or log in again.");
+  }
+
+  const result = await supabase.auth.getUser(token);
+
+  if (result.error) {
+    throw new Error(result.error.message);
+  }
+
+  return result.data.user.id;
+}
+
+// GET /api/events/my-events
+router.get('/my-events', async (req, res) => {
+  if (!requireSupabase(res)) return;
+
+  try {
+    const userId = await getUserIdFromRequest(req);
+    const events = await getEventsByHostId(userId);
+
+    res.json({ events });
+  } catch (err) {
+    res.status(401).json({ error: err.message });
+  }
+});
 
 // GET /api/events
 router.get('/', async (_req, res) => {
@@ -40,10 +79,17 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const event = await createEvent(result.data);
+    const userId = await getUserIdFromRequest(req);
+
+    const event = await createEvent({
+      ...result.data,
+      host_id: userId,
+    });
+
     res.status(201).json({ event });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+      const status = err.message === "Missing auth token" ? 401 : 500;
+      res.status(status).json({ error: err.message });
   }
 });
 

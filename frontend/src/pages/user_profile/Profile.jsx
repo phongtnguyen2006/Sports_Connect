@@ -2,30 +2,13 @@ import { useEffect, useState } from "react";
 import { getCurrentUserProfile } from "../../api/users";
 import "./Profile.css";
 import {Link} from "react-router-dom";
-
-
-const posts = [
-  {
-    title: "Looking for pickup basketball tonight",
-    meta: "May 12 - Westwood Rec Center",
-    text: "Need two more players for a friendly 5v5 run at 7 PM. All skill levels welcome.",
-  },
-  {
-    title: "Morning tennis rally",
-    meta: "May 8 - UCLA Tennis Courts",
-    text: "Had a great hitting session and found a new doubles partner through Sports Connect.",
-  },
-  {
-    title: "Weekend soccer group",
-    meta: "May 3 - Drake Stadium",
-    text: "Starting a casual Sunday soccer group. Comment if you want to join next week.",
-  },
-];
+import { fetchMyEvents } from "../../api/events";
 
 function Profile() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [myEvents, setMyEvents] = useState([]);
 
   useEffect(() => {
     async function loadProfile() {
@@ -37,8 +20,13 @@ function Profile() {
           return;
         }
 
+        
         const Profiledata = await getCurrentUserProfile(token);
         setProfile(Profiledata);
+
+        const events = await fetchMyEvents(token);
+        setMyEvents(events);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -89,7 +77,6 @@ function Profile() {
             <p className="profile-username">@{username}</p>
             <p className="profile-bio">{bio}</p>
 
-
             <div className="profile-details" aria-label="Profile details">
               {favoriteSports.length > 0 ? (
                 favoriteSports.map((sport) => (
@@ -107,7 +94,7 @@ function Profile() {
 
         <div className="profile-stats" aria-label="Profile stats">
           <div>
-            <strong>18</strong>
+            <strong>{myEvents.length}</strong>
             <span>Posts</span>
           </div>
           <div>
@@ -129,14 +116,21 @@ function Profile() {
           </div>
 
           <div className="posts-grid">
-            {posts.map((post) => (
-              <article className="post" key={post.title}>
-                <p className="post-meta">{post.meta}</p>
-                <h3>{post.title}</h3>
-                <p>{post.text}</p>
-              </article>
-            ))}
-          </div>
+            {myEvents.length > 0 ? (
+                myEvents.map((event) => (
+                  <article className="post" key={event.id}>
+                    <p className="post-meta">
+                      {new Date(event.starts_at).toLocaleDateString()} - {" "}
+                      {event.location || "Location TBD"}
+                    </p>
+                    <h3>{event.title}</h3>
+                    <p>{event.description || "No description provided."}</p>
+                  </article>
+                ))
+              ) : (
+                <p>No previous events yet.</p>
+              )}
+            </div>
         </section>
       </section>
     </div>
