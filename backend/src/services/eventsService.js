@@ -1,9 +1,6 @@
 import { getSupabase } from '../config/supabase.js';
 import { datetimeLocalToTimestamptz } from '../utils/datetimeLocalToTimestamptz.js';
 
-
-const CURRENT_USER_ID = '01d186e7-a62c-4298-8ee0-c12c02c08cd7';
-
 /**
  * @param {Record<string, any>} row
  * @returns {import('../models/event.js').Event}
@@ -92,15 +89,16 @@ export async function getEventRsvps(eventId) {
 
 /**
  * @param {Record<string, any>} input - validated event fields
+ * @param {string} userId - Authenticated Supabase user id.
  * @returns {Promise<import('../models/event.js').Event>}
  */
-export async function createEvent(input) {
+export async function createEvent(input, userId) {
   const supabase = getSupabase();
 
   const { data, error } = await supabase
     .from('events')
     .insert({
-      host_id: input.host_id, 
+      host_id: userId, 
       title: input.title,
       description: input.description,
       starts_at: datetimeLocalToTimestamptz(input.starts_at), 
@@ -120,16 +118,17 @@ export async function createEvent(input) {
  * Creates an RSVP row for the provided event.
  *
  * @param {import('../models/event.js').Event} event - Existing event being RSVP'd to.
+ * @param {string} userId - Authenticated Supabase user id.
  * @returns {Promise<Record<string, any>>}
  */
-export async function createEventRsvp(event) {
+export async function createEventRsvp(event, userId) {
   const supabase = getSupabase(); 
 
   const { data, error } = await supabase
     .from('event_rsvps')
     .insert({
       event_id: event.id,
-      user_id: CURRENT_USER_ID
+      user_id: userId
     })
     .select()
     .single();
@@ -142,16 +141,17 @@ export async function createEventRsvp(event) {
  * Deletes the current user's RSVP for the provided event id.
  *
  * @param {number} eventId - Validated event id from the route params.
+ * @param {string} userId - Authenticated Supabase user id.
  * @returns {Promise<Record<string, any> | null>} Deleted RSVP row, or null if none existed.
  */
-export async function deleteEventRsvp(eventId) {
+export async function deleteEventRsvp(eventId, userId) {
   const supabase = getSupabase(); 
 
   const { data, error } = await supabase
     .from('event_rsvps')
     .delete()
     .eq('event_id', eventId)
-    .eq('user_id', CURRENT_USER_ID)
+    .eq('user_id', userId)
     .select()
     .maybeSingle(); 
 
