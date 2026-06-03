@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllEvents, getEventsByHostId, getEventById, createEvent, createEventRsvp, getUserRsvps, deleteEventRsvp } from '../services/eventsService.js';
+import {getAllEvents, getEventById, getEventsByHostId, getEventRsvpCount, getRsvpCountByEventIds, getUserRsvps, createEvent, createEventRsvp, deleteEventRsvp } from '../services/eventsService.js'
 import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
 import { validateEventBody } from '../utils/validateEvent.js';
 import { validateEventId } from '../utils/validateEventId.js';
@@ -69,13 +69,25 @@ router.get('/', async (req, res) => {
 
   try {
     const events = await getAllEvents();
-    const userRsvps = await getUserRsvps(user.id);
+    const rsvpMetaByEventId = await getRsvpCountByEventIds(
+      events.map((event) => event.id),
+      user.id
+    );
 
-    const rsvpedEventIds = new Set(userRsvps.map(rsvp => rsvp.event_id));
-    const eventsWithRsvpStatus = events.map(event => ({
-      ...event,
-      is_rsvpd: rsvpedEventIds.has(event.id),
-    }));
+    const eventsWithRsvpStatus = events.map((event) => {
+      const rsvpMeta = rsvpMetaByEventId.get(event.id) ?? {
+        count: 0,
+        is_rsvpd: false,
+      };
+
+      return {
+        ...event,
+        rsvp_count: rsvpMeta.count,
+        is_rsvpd: rsvpMeta.is_rsvpd,
+        is_full:
+          event.max_attendees !== null && rsvpMeta.count >= event.max_attendees,
+      };
+    });
 
     res.json({ events: eventsWithRsvpStatus });
   } catch (err) {
@@ -97,7 +109,8 @@ router.post('/', async (req, res) => {
 
   try {
     const event = await createEvent(result.data, user.id);
-    res.status(201).json({ event });
+    const eventRsvp = await createEventRsvp(event, user.id); 
+    res.status(201).json({ event, eventRsvp });
   } catch (err) {
       const status = err.message === "Missing auth token" ? 401 : 500;
       res.status(status).json({ error: err.message });
@@ -164,6 +177,13 @@ router.post('/:id/rsvp', async(req, res) => {
 
   try {
     const event = await getEventById(idStatus.data); 
+
+    const rsvpCount = await getEventRsvpCount(event.id); 
+
+    if(event.max_attendees !== null && rsvpCount >= event.max_attendees) {
+      return res.status(409).json({ error: 'Event at max capacity' });
+    }
+
     const eventRsvp = await createEventRsvp(event, user.id); 
     res.status(201).json( {eventRsvp} );
   } catch (err) {

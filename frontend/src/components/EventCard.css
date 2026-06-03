@@ -54,6 +54,20 @@
   color: #ffffff;
 }
 
+.event-card-full-status {
+  margin-left: auto;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
 .event-card-rsvp-check {
   width: 18px;
   height: 18px;

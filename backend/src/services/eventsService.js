@@ -104,6 +104,64 @@ export async function getEventRsvps(eventId) {
   return data; 
 }
 
+export async function getEventRsvpCount(eventId) {
+  const supabase = getSupabase(); 
+
+  const { count, error } = await supabase
+    .from('event_rsvps')
+    .select('*', {count: 'exact', head: true })
+    .eq('event_id', eventId); 
+
+    if (error) throw error; 
+    return count ?? 0; 
+}
+
+/**
+ * Builds RSVP metadata for several events in one query.
+ *
+ * @param {number[]} eventIds - Event ids to aggregate RSVP data for.
+ * @param {string} userId - Authenticated Supabase user id.
+ * @returns {Promise<Map<number, { count: number, is_rsvpd: boolean }>>}
+ */
+export async function getRsvpCountByEventIds(eventIds, userId) {
+  if (eventIds.length === 0) {
+    return new Map();
+  }
+
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .select('event_id, user_id')
+    .in('event_id', eventIds);
+
+  if (error) throw error;
+
+  const rsvpMetaByEventId = new Map(
+    eventIds.map((eventId) => [
+      eventId,
+      { count: 0, is_rsvpd: false },
+    ])
+  );
+
+  for (const rsvp of data) {
+    const currentMeta = rsvpMetaByEventId.get(rsvp.event_id) ?? {
+      count: 0,
+      is_rsvpd: false,
+    };
+
+    currentMeta.count += 1;
+
+    if (rsvp.user_id === userId) {
+      currentMeta.is_rsvpd = true;
+    }
+
+    rsvpMetaByEventId.set(rsvp.event_id, currentMeta);
+  }
+
+  return rsvpMetaByEventId;
+}
+
 /**
  * @param {Record<string, any>} input - validated event fields
  * @param {string} userId - Authenticated Supabase user id.

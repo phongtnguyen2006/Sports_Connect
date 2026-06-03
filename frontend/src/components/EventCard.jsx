@@ -11,6 +11,7 @@ import './EventCard.css';
 export default function EventCard({ event, onRsvpChange }) {
   const [isRsvpUpdating, setIsRsvpUpdating] = useState(false);
   const meta = formatEventMeta(event.starts_at, event.ends_at, event.location);
+  const showFullStatus = event.is_full && !event.is_rsvpd;
 
   async function handleRsvpClick() {
     setIsRsvpUpdating(true);
@@ -34,25 +35,29 @@ export default function EventCard({ event, onRsvpChange }) {
         {event.sport ? (
           <span className="event-card-sport">{event.sport}</span>
         ) : null}
-        <button
-          type="button"
-          className={`event-card-rsvp-button${event.is_rsvpd ? ' is-rsvpd' : ''}`}
-          onClick={handleRsvpClick}
-          disabled={isRsvpUpdating}
-          aria-label={event.is_rsvpd ? 'Remove RSVP' : 'RSVP to event'}
-        >
-          {event.is_rsvpd ? (
-            <svg
-              aria-hidden="true"
-              className="event-card-rsvp-check"
-              viewBox="0 0 24 24"
-            >
-              <path d="M5 12.5L10 17.5L19 6.5" />
-            </svg>
-          ) : (
-            <span aria-hidden="true">+</span>
-          )}
-        </button>
+        {showFullStatus ? (
+          <span className="event-card-full-status">Full</span>
+        ) : (
+          <button
+            type="button"
+            className={`event-card-rsvp-button${event.is_rsvpd ? ' is-rsvpd' : ''}`}
+            onClick={handleRsvpClick}
+            disabled={isRsvpUpdating}
+            aria-label={event.is_rsvpd ? 'Remove RSVP' : 'RSVP to event'}
+          >
+            {event.is_rsvpd ? (
+              <svg
+                aria-hidden="true"
+                className="event-card-rsvp-check"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 12.5L10 17.5L19 6.5" />
+              </svg>
+            ) : (
+              <span aria-hidden="true">+</span>
+            )}
+          </button>
+        )}
       </div>
       <p className="event-card-meta">{meta}</p>
       <h3 className="event-card-title">{event.title}</h3>
