@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import { getCurrentUserProfile } from "../../api/users";
 import "./Profile.css";
 import {Link} from "react-router-dom";
-import { fetchMyEvents } from "../../api/events";
+import { fetchMyEvents, fetchMyRsvps } from "../../api/events";
+
+
 
 function Profile() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [myEvents, setMyEvents] = useState([]);
+  const [eventsJoined, setEventsJoined] = useState(0);
 
   useEffect(() => {
     async function loadProfile() {
@@ -26,6 +29,9 @@ function Profile() {
 
         const events = await fetchMyEvents(token);
         setMyEvents(events);
+
+        const rsvpData  = await fetchMyRsvps(token);
+        setEventsJoined(rsvpData.count);
 
       } catch (err) {
         setError(err.message);
@@ -101,18 +107,18 @@ function Profile() {
             <strong>42</strong>
             <span>Connections</span>
           </div>
-          <div>
-            <strong>7</strong>
+          <Link className="profile-stat-link" to="/profile/joined-events">
+            <strong>{eventsJoined}</strong>
             <span>Events Joined</span>
-          </div>
+          </Link>
         </div>
 
         <section className="posts-section" aria-labelledby="previous-posts">
           <div className="posts-header">
             <h2 id="previous-posts">Previous Posts</h2>
-            <button className="view-all-button" type="button">
+            <Link className="view-all-button" to="/profile/events">
               View All
-            </button>
+            </Link>
           </div>
 
           <div className="posts-grid">

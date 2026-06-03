@@ -113,3 +113,45 @@ export async function fetchMyEvents(token) {
 
   return data.events ?? [];
 }
+
+/**
+ * Fetches RSVP records/count for the currently logged-in user.
+ * @returns {Promise<{ rsvps: Array<{ event_id: number }>, count: number }>}
+ */
+
+export async function fetchMyRsvps() {
+  const response = await fetch('/api/events/my-rsvps', {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to load user RSVPs');
+  }
+
+  return {
+    rsvps: data.rsvps ?? [],
+    count: data.count ?? 0,
+  };
+}
+
+/**
+ * Fetches full event data for events the current user has RSVP'd to.
+ * @returns {Promise<Event[]>}
+ */
+export async function fetchJoinedEvents() {
+  const response = await fetch('/api/events/joined-events', {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to load joined events');
+  }
+
+  return data.events ?? [];
+}
