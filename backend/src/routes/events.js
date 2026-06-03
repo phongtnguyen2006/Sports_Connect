@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllEvents, getEventById, getEventRsvpCount, createEvent, createEventRsvp, getUserRsvps, deleteEventRsvp } from '../services/eventsService.js';
+import { getAllEvents, getEventById, getEventRsvpCount, getRsvpCountByEventIds, createEvent, createEventRsvp, deleteEventRsvp } from '../services/eventsService.js';
 import { isSupabaseConfigured } from '../config/supabase.js';
 import { validateEventBody } from '../utils/validateEvent.js';
 import { validateEventId } from '../utils/validateEventId.js';
@@ -30,13 +30,25 @@ router.get('/', async (req, res) => {
 
   try {
     const events = await getAllEvents();
-    const userRsvps = await getUserRsvps(user.id);
+    const rsvpMetaByEventId = await getRsvpCountByEventIds(
+      events.map((event) => event.id),
+      user.id
+    );
 
-    const rsvpedEventIds = new Set(userRsvps.map(rsvp => rsvp.event_id));
-    const eventsWithRsvpStatus = events.map(event => ({
-      ...event,
-      is_rsvpd: rsvpedEventIds.has(event.id),
-    }));
+    const eventsWithRsvpStatus = events.map((event) => {
+      const rsvpMeta = rsvpMetaByEventId.get(event.id) ?? {
+        count: 0,
+        is_rsvpd: false,
+      };
+
+      return {
+        ...event,
+        rsvp_count: rsvpMeta.count,
+        is_rsvpd: rsvpMeta.is_rsvpd,
+        is_full:
+          event.max_attendees !== null && rsvpMeta.count >= event.max_attendees,
+      };
+    });
 
     res.json({ events: eventsWithRsvpStatus });
   } catch (err) {
