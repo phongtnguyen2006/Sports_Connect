@@ -70,7 +70,8 @@ router.post('/', async (req, res) => {
 
   try {
     const event = await createEvent(result.data, user.id);
-    res.status(201).json({ event });
+    const eventRsvp = await createEventRsvp(event, user.id); 
+    res.status(201).json({ event, eventRsvp });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
