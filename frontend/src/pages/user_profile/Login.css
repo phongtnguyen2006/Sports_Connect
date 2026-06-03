@@ -86,7 +86,7 @@
   margin-top: 4px;
   border: none;
   border-radius: 8px;
-  background-color: #590808;
+  background-color: #2563eb;
   color: white;
   cursor: pointer;
   font: inherit;
@@ -95,7 +95,7 @@
 }
 
 .login-form button:hover:not(:disabled) {
-  background-color: #711111;
+  background-color: #2563eb;
 }
 
 .login-form button:disabled {
