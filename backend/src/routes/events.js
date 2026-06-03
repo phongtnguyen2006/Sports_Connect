@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllEvents, getEventById, createEvent, createEventRsvp, getUserRsvps, deleteEventRsvp } from '../services/eventsService.js';
+import { getAllEvents, getEventById, getEventRsvpCount, createEvent, createEventRsvp, getUserRsvps, deleteEventRsvp } from '../services/eventsService.js';
 import { isSupabaseConfigured } from '../config/supabase.js';
 import { validateEventBody } from '../utils/validateEvent.js';
 import { validateEventId } from '../utils/validateEventId.js';
@@ -78,6 +78,13 @@ router.post('/:id/rsvp', async(req, res) => {
 
   try {
     const event = await getEventById(idStatus.data); 
+
+    const rsvpCount = await getEventRsvpCount(event.id); 
+
+    if(event.max_attendees !== null && rsvpCount >= event.max_attendees) {
+      return res.status(409).json({ error: 'Event at max capacity' });
+    }
+
     const eventRsvp = await createEventRsvp(event, user.id); 
     res.status(201).json( {eventRsvp} );
   } catch (err) {

@@ -87,6 +87,18 @@ export async function getEventRsvps(eventId) {
   return data; 
 }
 
+export async function getEventRsvpCount(eventId) {
+  const supabase = getSupabase(); 
+
+  const { data, error } = await supabase
+    .from('event_rsvps')
+    .select('*', {count: 'exact', head: true })
+    .eq('event_id', eventId); 
+
+    if (error) throw error; 
+    return count ?? 0; 
+}
+
 /**
  * @param {Record<string, any>} input - validated event fields
  * @param {string} userId - Authenticated Supabase user id.
