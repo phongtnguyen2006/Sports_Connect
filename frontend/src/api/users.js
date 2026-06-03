@@ -1,5 +1,5 @@
 /**
- * @param {{ email: string, password: string }} credentials
+ *  @param {{ email: string, password: string }} credentials
  * @returns {Promise<{ user?: object, session?: object }>}
  */
 export async function loginUser(credentials) {
@@ -45,6 +45,7 @@ export async function completeProfile(profileData, token) {
   formData.append('firstName', profileData.firstName);
   formData.append('lastName', profileData.lastName);  
   formData.append("username", profileData.username);
+  formData.append("biography", profileData.biography|| "");
   formData.append("favoriteSports", JSON.stringify(profileData.favoriteSports));
 
   if (profileData.profileImage) {
@@ -64,4 +65,23 @@ export async function completeProfile(profileData, token) {
     throw new Error(data.error ?? 'profile completion failed');
   }
   return data;
+}
+
+/**
+ * Gets the currently logged-in user's profile
+ * @param {string} token - Supabase access token (Bearer)
+ * @returns {Promise<object>}
+ */
+export async function getCurrentUserProfile(token){
+  const response = await fetch('/api/users/user-data', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to load profile data');
+  }
+  return data.user;
 }

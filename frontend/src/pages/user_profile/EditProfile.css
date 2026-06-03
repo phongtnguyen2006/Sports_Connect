@@ -18,6 +18,7 @@
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
+  display: block;
   cursor: pointer;
   border: 3px solid #2563eb;
 }
@@ -55,4 +56,39 @@
 .Bio input:focus {
   outline: none;
   border-color: #2563eb;
+}
+
+.edit-profile-form {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.save-profile-button {
+  width: 100%;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.save-profile-button:hover {
+  background: #1d4ed8;
+}
+
+.save-profile-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.edit-profile-error {
+  color: #dc2626;
+  font-weight: 700;
 }

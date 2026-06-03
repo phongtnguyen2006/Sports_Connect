@@ -213,6 +213,7 @@ router.patch('/complete-profile', upload.single('profileImage'), async (req, res
   const username = req.body.username;
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
+  const biography = req.body.biography;
   const favorite_sports = JSON.parse(req.body.favoriteSports || "[]");
   //const profileResult = await supabase
 
@@ -258,6 +259,7 @@ const updateData = {
   firstName: firstName,
   lastName:  lastName,
   username:  username,
+  biography: biography,
   favorite_sports:favorite_sports
 };
 

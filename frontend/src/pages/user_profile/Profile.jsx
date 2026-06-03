@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { getCurrentUserProfile } from "../../api/users";
 import "./Profile.css";
 import {Link} from "react-router-dom";
 
@@ -21,6 +23,54 @@ const posts = [
 ];
 
 function Profile() {
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const token = localStorage.getItem("access_token");
+
+        if (!token) {
+          setError("You are not logged in.");
+          return;
+        }
+
+        const Profiledata = await getCurrentUserProfile(token);
+        setProfile(Profiledata);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProfile();
+    }, []);
+
+  if (loading) {
+    return <div className="profile-page">Loading profile...</div>;
+  }
+
+  if (error) {
+    return <div className="profile-page">Error: {error}</div>;
+  }
+
+  if (!profile) {
+    return <div className="profile-page">Profile not found.</div>;
+  }
+
+  const fullName = 
+    profile.firstName && profile.lastName
+      ? `${profile.firstName} ${profile.lastName}`
+      : profile.username || "User";
+
+  const username = profile.username || "username";
+  const bio = profile.biography || "No biography yet."
+  const profileImage = profile.profile_image || "/images/images-2.jpeg";
+  const favoriteSports = profile.favorite_sports || [];
+
   return (
     <div className="profile-page">
       <section className="profile-content" aria-label="User profile">
@@ -28,26 +78,27 @@ function Profile() {
           <div className="profile-photo-wrap">
             <img
               className="profile-image"
-              src="/images/images-2.jpeg"
-              alt="John Doe profile"
+              src={profileImage}
+              alt={`${fullName} profile`}
             />
           </div>
 
           <div className="profile-info">
             <p className="profile-label">Sports Connect Profile</p>
-            <h1 className="profile-name">John Doe</h1>
-            <p className="profile-username">@johndoe</p>
-            <p className="profile-bio">
-              Basketball and tennis player looking for pickup games, training
-              partners, and weekend tournaments around campus.
-            </p>
+            <h1 className="profile-name">{fullName}</h1>
+            <p className="profile-username">@{username}</p>
+            <p className="profile-bio">{bio}</p>
+
 
             <div className="profile-details" aria-label="Profile details">
-              <span>Basketball</span>
-              <span>Los Angeles, CA</span>
-              <span>Usually free evenings</span>
+              {favoriteSports.length > 0 ? (
+                favoriteSports.map((sport) => (
+                  <span key={sport}>{sport}</span>
+                ))
+              ) : (
+                <span>No sports selected</span>
+              )}
             </div>
-
             <Link className="edit-profile-button" to="/profile/edit-profile">
               Edit Profile
             </Link>
