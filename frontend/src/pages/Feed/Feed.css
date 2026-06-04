@@ -99,10 +99,180 @@ main:has(.feed-page) {
   gap: 18px;
 }
 
+.feed-layout {
+  position: relative;
+}
+
 .events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 18px;
+}
+
+.feed-comments-panel {
+  position: fixed;
+  top: 104px;
+  right: clamp(24px, 5vw, 72px);
+  bottom: 40px;
+  z-index: 20;
+  width: min(380px, calc(100vw - 720px));
+  min-width: 320px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.feed-comments-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 18px;
+}
+
+.feed-comments-eyebrow {
+  margin: 0 0 5px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.feed-comments-header h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 19px;
+  line-height: 1.3;
+}
+
+.feed-comments-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0;
+  cursor: pointer;
+}
+
+.feed-comments-close svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.feed-comments-list {
+  flex: 1;
+  min-height: 160px;
+  overflow-y: auto;
+  padding: 16px 18px;
+}
+
+.feed-comments-empty {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.feed-comment {
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+
+.feed-comment:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.feed-comment-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+}
+
+.feed-comment-header strong {
+  color: #172033;
+  font-size: 14px;
+}
+
+.feed-comment-rsvp {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.feed-comment-header span {
+  color: #64748b;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.feed-comment p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.feed-comment-form {
+  border-top: 1px solid #e2e8f0;
+  padding: 16px 18px 18px;
+}
+
+.feed-comment-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #172033;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.feed-comment-form textarea {
+  width: 100%;
+  min-height: 92px;
+  resize: vertical;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #172033;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.feed-comment-form button {
+  width: 100%;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 11px 14px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .feed-status {
@@ -134,5 +304,15 @@ main:has(.feed-page) {
   .feed-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 980px) {
+  .feed-comments-panel {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    max-height: none;
+    margin-top: 24px;
   }
 }
