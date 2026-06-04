@@ -1,5 +1,22 @@
+import { useEffect, useState } from "react";
+import { fetchEventComments } from "../api/comments";
+
 export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsClick }) {
-  console.log(selectedCommentEvent);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    async function loadComments() {
+      const comments = await fetchEventComments(selectedCommentEvent); 
+      setComments(comments);       
+    }
+
+    if(selectedCommentEvent) {
+      loadComments(); 
+    }
+  }, [selectedCommentEvent]);
+
+  
+
   return (
     <aside className="feed-comments-panel" aria-label="Event comments">
       <FeedCommentsWindowHeader
@@ -8,15 +25,7 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
       />
 
       <div className="feed-comments-list">        
-        <FeedSingleComment 
-          name="Alex" 
-          time="10:24 AM" 
-          message="Is there still room for one more player?"/>
-
-        <FeedSingleComment
-          name="Sam"
-          time="10:31 AM"
-          message="I can bring an extra ball if needed."/>
+        <p>no comments yet</p>
       </div>
 
       <FeedCommentForm/>
