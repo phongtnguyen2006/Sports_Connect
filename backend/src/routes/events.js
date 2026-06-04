@@ -13,8 +13,10 @@ import {
 } from '../services/eventsService.js';
 import { validateEventBody } from '../utils/validateEvent.js';
 import { validateEventId } from '../utils/validateEventId.js';
+import { validateCommentMessage } from '../utils/validateCommentMessage.js';
 import { getAuthUser } from '../utils/getAuthUser.js';
 import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
+import { createEventComment } from '../services/commentsService.js';
 /**
  * Events use case — backed by the Supabase `events` table.
  * Mounted at /api/events.
@@ -215,4 +217,37 @@ router.delete('/:id/rsvp', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// POST /api/events/:id/comment
+router.post('/:id/comment', async(req, res) => {
+  if (!requireSupabase(res)) return; 
+
+  const user = await getAuthUser(req, res); 
+  if (!user) return; 
+
+  const idStatus = validateEventId(req.params.id); 
+  if (!idStatus.ok) {
+    return res.status(400).json({ error: idStatus.error });
+  }
+
+  const message = validateCommentMessage(req.body); 
+
+  if (!message.ok) {
+    return res.status(409).json({ error: message.error });
+  }
+
+  console.log({
+    'event_id': idStatus.data, 
+    'user_id': user.id, 
+    'message': message.data
+  });
+
+  try {
+    const comment = await createEventComment(idStatus.data, user.id, message.data); 
+    res.status(201).json( {comment} ); 
+  } catch (err) {
+    res.status(500).json({ error: err.message }); 
+  }
+})
+
 export default router;
