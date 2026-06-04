@@ -125,6 +125,7 @@ export default function Feed() {
 
           {isCommentsOpen ? (
             <FeedCommentsWindow
+              selectedCommentEvent={selectedCommentEvent}
               handleCloseCommentsClick={handleCloseCommentsClick}
             />
           ) : null}

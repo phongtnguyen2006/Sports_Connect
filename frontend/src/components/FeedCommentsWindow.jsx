@@ -1,7 +1,11 @@
-export function FeedCommentsWindow({ handleCloseCommentsClick }) {
+export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsClick }) {
+  console.log(selectedCommentEvent);
   return (
     <aside className="feed-comments-panel" aria-label="Event comments">
-      <FeedCommentsWindowHeader handleCloseCommentsClick={handleCloseCommentsClick}/>
+      <FeedCommentsWindowHeader
+        selectedCommentEvent={selectedCommentEvent}
+        handleCloseCommentsClick={handleCloseCommentsClick}
+      />
 
       <div className="feed-comments-list">        
         <FeedSingleComment 
@@ -20,12 +24,12 @@ export function FeedCommentsWindow({ handleCloseCommentsClick }) {
   ); 
 }
 
-function FeedCommentsWindowHeader({ handleCloseCommentsClick }) {
+function FeedCommentsWindowHeader({ selectedCommentEvent, handleCloseCommentsClick }) {
   return (
     <div className="feed-comments-header">
       <div>
         <p className="feed-comments-eyebrow">Comments</p>
-        <h2>Event discussion</h2>
+        <h2>{selectedCommentEvent?.title}</h2>
       </div>
       <FeedCommentsCloseXButton handleCloseCommentsClick={handleCloseCommentsClick}/>
     </div>
