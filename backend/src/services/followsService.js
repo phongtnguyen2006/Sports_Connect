@@ -1,11 +1,43 @@
-import { getSupabase, getSupabaseAdmin } from '../config/supabase.js';
+import { getSupabase } from '../config/supabase.js';
 
 /**
- * @param {string[]|null|undefined} following
+ * @param {{ message?: string, details?: string, hint?: string, code?: string }} error
+ */
+function formatDbError(error) {
+  const parts = [error.message, error.details, error.hint, error.code].filter(Boolean);
+  return parts.join(' — ') || 'Database error';
+}
+
+/**
+ * @param {unknown} following
  * @returns {string[]}
  */
 function normalizeFollowing(following) {
-  return Array.isArray(following) ? following : [];
+  if (Array.isArray(following)) {
+    return following.map((id) => String(id));
+  }
+
+  if (typeof following === 'string') {
+    const trimmed = following.trim();
+    if (!trimmed) return [];
+
+    if (trimmed.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return Array.isArray(parsed) ? parsed.map((id) => String(id)) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      const inner = trimmed.slice(1, -1).trim();
+      if (!inner) return [];
+      return inner.split(',').map((id) => id.replace(/^"|"$/g, '').trim());
+    }
+  }
+
+  return [];
 }
 
 /**
@@ -56,7 +88,6 @@ export async function followUser(followerId, followingId) {
   }
 
   const supabase = getSupabase();
-  const supabaseAdmin = getSupabaseAdmin();
 
   const { data: targetUser, error: profileError } = await supabase
     .from('users')
@@ -85,12 +116,16 @@ export async function followUser(followerId, followingId) {
     throw new Error('Already following');
   }
 
-  const { error } = await supabaseAdmin
+  const updatedFollowing = [...following, followingId];
+
+  const { error: updateError } = await supabase
     .from('users')
-    .update({ following: [...following, followingId] })
+    .update({ following: updatedFollowing })
     .eq('id', followerId);
 
-  if (error) throw error;
+  if (updateError) {
+    throw new Error(formatDbError(updateError));
+  }
 }
 
 /**
@@ -99,7 +134,6 @@ export async function followUser(followerId, followingId) {
  */
 export async function unfollowUser(followerId, followingId) {
   const supabase = getSupabase();
-  const supabaseAdmin = getSupabaseAdmin();
 
   const { data: currentUser, error: currentUserError } = await supabase
     .from('users')
@@ -117,10 +151,12 @@ export async function unfollowUser(followerId, followingId) {
     throw new Error('Follow not found');
   }
 
-  const { error } = await supabaseAdmin
+  const { error: updateError } = await supabase
     .from('users')
     .update({ following: following.filter((id) => id !== followingId) })
     .eq('id', followerId);
 
-  if (error) throw error;
+  if (updateError) {
+    throw new Error(formatDbError(updateError));
+  }
 }

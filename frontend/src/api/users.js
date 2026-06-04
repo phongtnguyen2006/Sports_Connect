@@ -54,7 +54,11 @@ export async function followUser(followingId) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.error ?? 'Failed to follow user');
+    const message =
+      data.error ??
+      data.message ??
+      `Failed to follow user (${response.status})`;
+    throw new Error(message);
   }
 }
 

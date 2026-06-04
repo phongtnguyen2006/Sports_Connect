@@ -22,19 +22,14 @@ if (url && secretKey) {
     },
   });
 
-  // Admin client for storage/table writes that should bypass RLS
+  // Admin client for storage uploads (same service key, no custom auth header)
   supabaseAdmin = createClient(url, secretKey, {
-    global: {
-        headers: {
-            Authorization: `Bearer ${secretKey}`,
-        },
-    },
     auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-        detectSessionInUrl: false,
-        },
-    });
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
 } else {
   console.warn(
     '[supabase] SUPABASE_URL or SUPABASE_SECRET_KEY missing — ' +

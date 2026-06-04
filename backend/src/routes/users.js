@@ -150,6 +150,7 @@ router.post('/follow', async (req, res) => {
     await followUser(user.id, followingId);
     res.status(201).json({ message: 'Now following user' });
   } catch (err) {
+    console.error('[users/follow]', err);
     const status =
       err.message === 'Already following' || err.message === 'User not found'
         ? 409
