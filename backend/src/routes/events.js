@@ -16,7 +16,10 @@ import { validateEventId } from '../utils/validateEventId.js';
 import { validateCommentMessage } from '../utils/validateCommentMessage.js';
 import { getAuthUser } from '../utils/getAuthUser.js';
 import { getSupabase, isSupabaseConfigured } from '../config/supabase.js';
-import { createEventComment } from '../services/commentsService.js';
+import {
+  createEventComment,
+  getEventComments,
+} from '../services/commentsService.js';
 /**
  * Events use case — backed by the Supabase `events` table.
  * Mounted at /api/events.
@@ -217,6 +220,26 @@ router.delete('/:id/rsvp', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// GET /api/events/:id/comment
+router.get('/:id/comment', async(req, res) => {
+  if (!requireSupabase(res)) return;
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  const idStatus = validateEventId(req.params.id);
+  if (!idStatus.ok) {
+    return res.status(400).json({ error: idStatus.error });
+  }
+
+  try {
+    const comments = await getEventComments(idStatus.data);
+    res.status(200).json({ comments });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
 
 // POST /api/events/:id/comment
 router.post('/:id/comment', async(req, res) => {

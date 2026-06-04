@@ -1,5 +1,42 @@
 import { getSupabase } from "../config/supabase.js";
 
+function toEventComment(row, rsvpdUserIds) {
+  return {
+    eventId: row.event_id,
+    userId: row.user_id,
+    message: row.message,
+    created_at: row.created_at,
+    is_rsvpd: rsvpdUserIds.has(row.user_id),
+  };
+}
+
+export async function getEventComments(eventId) {
+  const supabase = getSupabase();
+
+  const [commentsResult, rsvpsResult] = await Promise.all([
+    supabase
+      .from('event_comments')
+      .select('event_id, user_id, message, created_at')
+      .eq('event_id', eventId)
+      .order('created_at', { ascending: true }),
+    supabase
+      .from('event_rsvps')
+      .select('user_id')
+      .eq('event_id', eventId),
+  ]);
+
+  if (commentsResult.error) throw commentsResult.error;
+  if (rsvpsResult.error) throw rsvpsResult.error;
+
+  const rsvpdUserIds = new Set(
+    rsvpsResult.data.map((rsvp) => rsvp.user_id)
+  );
+
+  return commentsResult.data.map((comment) =>
+    toEventComment(comment, rsvpdUserIds)
+  );
+}
+
 export async function createEventComment(eventId, userId, message) {
   const supabase = getSupabase(); 
 
