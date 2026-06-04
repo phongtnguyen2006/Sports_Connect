@@ -6,12 +6,19 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
 
   useEffect(() => {
     async function loadComments() {
-      const comments = await fetchEventComments(selectedCommentEvent); 
-      setComments(Array.isArray(comments) ? comments : []);
+      try {
+        const comments = await fetchEventComments(selectedCommentEvent);
+        setComments(Array.isArray(comments) ? comments : []);
+      } catch (err) {
+        console.error(err);
+        setComments([]);
+      }
     }
 
     if(selectedCommentEvent) {
       loadComments(); 
+    } else {
+      setComments([]);
     }
   }, [selectedCommentEvent]);
 
@@ -28,7 +35,16 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
       />
 
       <div className="feed-comments-list">
-        <p>no comments yet</p>
+        {comments.length === 0 ? (
+          <p className="feed-comments-empty">No comments yet</p>
+        ) : (
+          comments.map((comment) => (
+            <FeedSingleComment
+              key={`${comment.userId ?? comment.user_id}-${comment.created_at}`}
+              comment={comment}
+            />
+          ))
+        )}
       </div>
 
       <FeedCommentForm
@@ -106,14 +122,40 @@ function FeedCommentForm({ selectedCommentEvent, onCommentCreated }) {
   ); 
 }
 
-function FeedSingleComment({name, time, message}) {
+function FeedSingleComment({comment}) {
+  const userId = comment.userId ?? comment.user_id;
+  const authorName = comment.username
+    ? `@${comment.username}`
+    : formatCommentAuthor(userId);
+  const createdAt = comment.created_at
+    ? new Date(comment.created_at).toLocaleString([], {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      })
+    : '';
+
   return (
     <article className="feed-comment">
       <div className="feed-comment-header">
-        <strong>{name}</strong>
-        <span>{time}</span>
+        <div>
+          <strong>{authorName}</strong>
+          {comment.is_rsvpd ? (
+            <span className="feed-comment-rsvp">RSVP'd</span>
+          ) : null}
+        </div>
+        <span>{createdAt}</span>
       </div>
-      <p>{message}</p>
+      <p>{comment.message}</p>
     </article>
   ); 
+}
+
+function formatCommentAuthor(userId) {
+  if (!userId) {
+    return 'Member';
+  }
+
+  return `Member ${String(userId).slice(0, 8)}`;
 }
