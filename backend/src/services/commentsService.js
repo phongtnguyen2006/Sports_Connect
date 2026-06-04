@@ -1,9 +1,10 @@
 import { getSupabase } from "../config/supabase.js";
 
-function toEventComment(row, rsvpdUserIds) {
+function toEventComment(row, rsvpdUserIds, usernamesByUserId) {
   return {
     eventId: row.event_id,
     userId: row.user_id,
+    username: usernamesByUserId.get(row.user_id) ?? null,
     message: row.message,
     created_at: row.created_at,
     is_rsvpd: rsvpdUserIds.has(row.user_id),
@@ -32,8 +33,25 @@ export async function getEventComments(eventId) {
     rsvpsResult.data.map((rsvp) => rsvp.user_id)
   );
 
+  const userIds = [
+    ...new Set(commentsResult.data.map((comment) => comment.user_id)),
+  ];
+
+  const usersResult = userIds.length > 0
+    ? await supabase
+      .from('users')
+      .select('id, username')
+      .in('id', userIds)
+    : { data: [], error: null };
+
+  if (usersResult.error) throw usersResult.error;
+
+  const usernamesByUserId = new Map(
+    usersResult.data.map((user) => [user.id, user.username])
+  );
+
   return commentsResult.data.map((comment) =>
-    toEventComment(comment, rsvpdUserIds)
+    toEventComment(comment, rsvpdUserIds, usernamesByUserId)
   );
 }
 
