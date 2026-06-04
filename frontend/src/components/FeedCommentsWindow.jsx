@@ -1,7 +1,7 @@
-export function FeedCommentsWindow() {
+export function FeedCommentsWindow({ handleCloseCommentsClick }) {
   return (
     <aside className="feed-comments-panel" aria-label="Event comments">
-      <FeedCommentsWindowHeader/>
+      <FeedCommentsWindowHeader handleCloseCommentsClick={handleCloseCommentsClick}/>
 
       <div className="feed-comments-list">        
         <FeedSingleComment 
@@ -20,24 +20,25 @@ export function FeedCommentsWindow() {
   ); 
 }
 
-function FeedCommentsWindowHeader() {
+function FeedCommentsWindowHeader({ handleCloseCommentsClick }) {
   return (
     <div className="feed-comments-header">
       <div>
         <p className="feed-comments-eyebrow">Comments</p>
         <h2>Event discussion</h2>
       </div>
-      <FeedCommentsCloseXButton/>
+      <FeedCommentsCloseXButton handleCloseCommentsClick={handleCloseCommentsClick}/>
     </div>
   ); 
 }
 
-function FeedCommentsCloseXButton() {
+function FeedCommentsCloseXButton({ handleCloseCommentsClick }) {
   return (
     <button
       type="button"
       className="feed-comments-close"
       aria-label="Close comments"
+      onClick={handleCloseCommentsClick}
     >
       <svg aria-hidden="true" viewBox="0 0 24 24">
         <path d="M6 6l12 12M18 6 6 18" />
