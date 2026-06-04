@@ -146,3 +146,40 @@ export async function fetchJoinedEvents() {
 
   return data.events ?? [];
 }
+
+/**
+ * Fetches events created by a specific user.
+ * @param {string} userId
+ * @returns {Promise<Event[]>}
+ */
+export async function fetchEventsByUserId(userId) {
+  const response = await fetch(`/api/events/user/${userId}`);
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error ?? "Failed to load user events");
+  }
+
+  return data.events ?? [];
+}
+
+/**
+ * Fetches events joined by a specific user.
+ * @param {string} userId
+ * @returns {Promise<{ events: Event[], count: number }>}
+ */
+export async function fetchJoinedEventsByUserId(userId) {
+  const response = await fetch(`/api/events/user/${userId}/joined`);
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error ?? "Failed to load joined events");
+  }
+
+  return {
+    events: data.events ?? [],
+    count: data.count ?? 0,
+  };
+}
