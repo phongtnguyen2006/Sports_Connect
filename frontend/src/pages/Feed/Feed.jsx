@@ -4,6 +4,7 @@ import { fetchEvents } from '../../api/events';
 import { searchUsers } from '../../api/users';
 import EventCard from '../../components/EventCard';
 import UserCard from '../../components/UserCard';
+import { FeedCommentsWindow } from '../../components/FeedCommentsWindow.jsx';
 import './Feed.css';
 
 /** @typedef {import('../../types/event.js').Event} Event */
@@ -39,6 +40,10 @@ export default function Feed() {
   const [usersLoading, setUsersLoading] = useState(false);
   const [error, setError] = useState(/** @type {string | null} */ (null));
   const [usersError, setUsersError] = useState(/** @type {string | null} */ (null));
+  const [selectedCommentEvent, setSelectedCommentEvent] = useState(
+    /** @type {Event | null} */ (null)
+  );
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,6 +140,16 @@ export default function Feed() {
     );
   }
 
+  function handleCommentClick(event) {
+    setSelectedCommentEvent(event);
+    setIsCommentsOpen(true);
+  }
+
+  function handleCloseCommentsClick() {
+    setSelectedCommentEvent(null);
+    setIsCommentsOpen(false);
+  }
+
   return (
     <main className="feed-page">
       <header className="feed-header">
@@ -220,14 +235,25 @@ export default function Feed() {
       {!loading && !error && filteredEvents.length > 0 ? (
         <section className="feed-results-section" aria-label="Matching events">
           {isSearching ? <h2 className="feed-section-title">Events</h2> : null}
-          <div className="events-grid">
-            {filteredEvents.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onRsvpChange={handleRsvpChange}
+          <div className="feed-layout">
+            <div className="events-grid">
+              {filteredEvents.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onRsvpChange={handleRsvpChange}
+                  onCommentClick={handleCommentClick}
+                  isCommentSelected={selectedCommentEvent?.id === event.id}
+                />
+              ))}
+            </div>
+
+            {isCommentsOpen ? (
+              <FeedCommentsWindow
+                selectedCommentEvent={selectedCommentEvent}
+                handleCloseCommentsClick={handleCloseCommentsClick}
               />
-            ))}
+            ) : null}
           </div>
         </section>
       ) : null}
