@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchEvents } from '../../api/events';
-import { searchUsers } from '../../api/users';
+import { addFriend, searchUsers } from '../../api/users';
 import EventCard from '../../components/EventCard';
 import UserCard from '../../components/UserCard';
 import { FeedCommentsWindow } from '../../components/FeedCommentsWindow.jsx';
@@ -44,6 +44,7 @@ export default function Feed() {
     /** @type {Event | null} */ (null)
   );
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [addingFriendId, setAddingFriendId] = useState(/** @type {string | null} */ (null));
 
   useEffect(() => {
     let cancelled = false;
@@ -150,6 +151,24 @@ export default function Feed() {
     setIsCommentsOpen(false);
   }
 
+  async function handleAddFriend(friendId) {
+    setAddingFriendId(friendId);
+    setUsersError(null);
+
+    try {
+      await addFriend(friendId);
+      setUsers((currentUsers) =>
+        currentUsers.map((user) =>
+          user.id === friendId ? { ...user, is_friend: true } : user
+        )
+      );
+    } catch (err) {
+      setUsersError(err instanceof Error ? err.message : 'Failed to add friend');
+    } finally {
+      setAddingFriendId(null);
+    }
+  }
+
   return (
     <main className="feed-page">
       <header className="feed-header">
@@ -222,7 +241,12 @@ export default function Feed() {
           <h2 className="feed-section-title">Users</h2>
           <div className="users-grid">
             {users.map((user) => (
-              <UserCard key={user.id} user={user} />
+              <UserCard
+                key={user.id}
+                user={user}
+                onAddFriend={handleAddFriend}
+                isAddingFriend={addingFriendId === user.id}
+              />
             ))}
           </div>
         </section>

@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import { getSupabase, getSupabaseAdmin, isSupabaseConfigured } from '../config/supabase.js';
 import { getAuthUser } from '../utils/getAuthUser.js';
+import {
+  addFriend,
+  getFriendIds,
+  getFriendsForUser,
+  removeFriend,
+} from '../services/friendsService.js';
 import multer from 'multer';
 
 function escapeIlike(value) {
@@ -89,7 +95,89 @@ router.get('/search', async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 
-  res.json({ users: data ?? [] });
+  const friendIds = await getFriendIds(user.id);
+  const usersWithFriendStatus = (data ?? [])
+    .filter((profile) => profile.id !== user.id)
+    .map((profile) => ({
+      ...profile,
+      is_friend: friendIds.has(profile.id),
+    }));
+
+  res.json({ users: usersWithFriendStatus });
+});
+
+// GET /api/users/friends
+router.get('/friends', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  try {
+    const friends = await getFriendsForUser(user.id);
+    res.json({ friends });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/users/friends
+router.post('/friends', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  const friendId = String(req.body?.friendId ?? '').trim();
+  if (!friendId) {
+    return res.status(400).json({ error: 'friendId is required' });
+  }
+
+  try {
+    await addFriend(user.id, friendId);
+    res.status(201).json({ message: 'Friend added' });
+  } catch (err) {
+    const status =
+      err.message === 'Already friends' || err.message === 'User not found'
+        ? 409
+        : err.message === 'You cannot add yourself as a friend'
+          ? 400
+          : 500;
+    res.status(status).json({ error: err.message });
+  }
+});
+
+// DELETE /api/users/friends/:friendId
+router.delete('/friends/:friendId', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  const friendId = String(req.params.friendId ?? '').trim();
+  if (!friendId) {
+    return res.status(400).json({ error: 'friendId is required' });
+  }
+
+  try {
+    await removeFriend(user.id, friendId);
+    res.json({ message: 'Friend removed' });
+  } catch (err) {
+    const status = err.message === 'Friendship not found' ? 404 : 500;
+    res.status(status).json({ error: err.message });
+  }
 });
 
 // GET /api/users/:username

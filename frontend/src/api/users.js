@@ -24,6 +24,56 @@ export async function searchUsers(query) {
 }
 
 /**
+ * @returns {Promise<UserProfile[]>}
+ */
+export async function fetchFriends() {
+  const response = await fetch('/api/users/friends', {
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to load friends');
+  }
+
+  return data.friends ?? [];
+}
+
+/**
+ * @param {string} friendId
+ */
+export async function addFriend(friendId) {
+  const response = await fetch('/api/users/friends', {
+    method: 'POST',
+    headers: {
+      ...getAuthHeaders(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ friendId }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to add friend');
+  }
+}
+
+/**
+ * @param {string} friendId
+ */
+export async function removeFriend(friendId) {
+  const response = await fetch(`/api/users/friends/${encodeURIComponent(friendId)}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to remove friend');
+  }
+}
+
+/**
  * @param {string} username
  * @returns {Promise<UserProfile>}
  */
