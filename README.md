@@ -1,29 +1,44 @@
 # Sports Connect
 
-Project skeleton: React (Vite, JSX) frontend + Node.js (Express) backend.
+React (Vite) frontend + Express backend, backed by Supabase. Run both locally with one command.
 
 ## Structure
 
 ```
-backend/    Express API (ESM, Node --watch)
-frontend/   React + Vite app
+backend/    Express API (ESM) — routes under /api (auth, users, events), Supabase client
+frontend/   React + Vite app — pages (feed, create-event, profile, auth), proxies /api to backend
+package.json  Root scripts that install and run both apps together
 ```
 
-## Getting started
+## Prerequisites
+
+- Node.js 18+ and npm
+- A Supabase project (free tier) — see `DATABASE_SETUP.txt` for keys + schema
+
+## Run locally
 
 ```bash
+# 1. Install dependencies (root, backend, frontend)
 npm run install:all
-npm run dev
+
+# 2. Add your Supabase keys
+cp backend/.env.example backend/.env      # fill in SUPABASE_URL + SUPABASE_SECRET_KEY
+cp frontend/.env.example frontend/.env    # fill in VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY
+
+# 3. Start the app
+npm run dev          # backend + frontend together (one terminal)
 ```
 
-- Frontend: http://localhost:5173
-- Backend:  http://localhost:3001
+Or run them in separate terminals for cleaner logs:
 
-`/api/*` requests from the frontend dev server are proxied to the backend.
+```bash
+npm run dev:backend  # terminal 1
+npm run dev:frontend # terminal 2
+```
 
-## Event feed
+- Frontend: <http://localhost:5173>
+- Backend:  <http://localhost:3001> (`/api/*` is proxied from the frontend)
 
-- **Feed** (`/feed`) — lists events from `GET /api/events` with title, description, date/time, location, sport, and host.
-- **Create Event** (`/create-event`) — posts new events via `POST /api/events`, then returns to the feed.
+Verify the backend: `curl http://localhost:3001/api/health` → `{"status":"ok"}`
 
-Events are stored in memory on the backend (resets when the server restarts). Seed data matches the sample posts on the profile page.
+> Without Supabase keys the app still starts, but every data route returns `503`.
