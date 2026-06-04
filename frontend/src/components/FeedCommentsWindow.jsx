@@ -5,6 +5,11 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
+    if(!selectedCommentEvent) {
+      setComments([]);
+      return;
+    }
+
     async function loadComments() {
       try {
         const comments = await fetchEventComments(selectedCommentEvent);
@@ -15,11 +20,11 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
       }
     }
 
-    if(selectedCommentEvent) {
-      loadComments(); 
-    } else {
-      setComments([]);
-    }
+    loadComments(); 
+
+    const intervalId = setInterval(loadComments, 3000); 
+
+    return () => clearInterval(intervalId); 
   }, [selectedCommentEvent]);
 
   
