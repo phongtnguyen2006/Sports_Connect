@@ -60,14 +60,14 @@ function FeedCommentForm() {
   ); 
 }
 
-function FeedSingleComment(name, time, message) {
+function FeedSingleComment({name, time, message}) {
   return (
     <article className="feed-comment">
       <div className="feed-comment-header">
-        <strong>Alex</strong>
-        <span>10:24 AM</span>
+        <strong>{name}</strong>
+        <span>{time}</span>
       </div>
-      <p>Is there still room for one more player?</p>
+      <p>{message}</p>
     </article>
   ); 
 }
