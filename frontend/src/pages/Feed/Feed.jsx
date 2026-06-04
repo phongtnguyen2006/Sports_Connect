@@ -12,6 +12,7 @@ export default function Feed() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(/** @type {string | null} */ (null));
   const [selectedCommentEvent, setSelectedCommentEvent] = useState(/** @type {Event | null} */(null));
+  const [isCommentsOpen, setIsCommentsOpen] = useState(/** @type {boolean} */ false);
 
   useEffect(() => {
     let cancelled = false;
@@ -64,6 +65,12 @@ export default function Feed() {
 
   function handleCommentClick(event) {
     setSelectedCommentEvent(event);
+    setIsCommentsOpen(true);
+  }
+
+  function handleCloseCommentsClick() {
+    setSelectedCommentEvent(null);
+    setIsCommentsOpen(false);
   }
 
   return (
@@ -116,7 +123,11 @@ export default function Feed() {
             ))}
           </section>
 
-          <FeedCommentsWindow/>
+          {isCommentsOpen ? (
+            <FeedCommentsWindow
+              handleCloseCommentsClick={handleCloseCommentsClick}
+            />
+          ) : null}
           
         </div>
       ) : null}
