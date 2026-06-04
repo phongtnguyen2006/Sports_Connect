@@ -11,6 +11,7 @@ import Registration from './pages/user_profile/Registration'
 import CompleteRegistration from './pages/user_profile/CompleteProfilePage'
 import UserEvents from './pages/user_profile/UserEvents';
 import JoinedEvents from './pages/user_profile/JoinedEvents';
+import PublicProfile from './pages/user_profile/PublicProfile';
 
 export default function App() {
   const [currentUser,setCurrentUser] = useState(null);
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/profile/edit-profile" element={<EditProfile />} />
         <Route path="/profile/joined-events" element={<JoinedEvents />} />
         <Route path="/profile/events" element={<UserEvents />} />
+        <Route path="/users/:username" element={<PublicProfile />} />
       </Route>
       <Route
           path="/registration/complete-profile"

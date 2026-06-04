@@ -1,6 +1,11 @@
 import { Router } from 'express';
 import { getSupabase, getSupabaseAdmin, isSupabaseConfigured } from '../config/supabase.js';
+import { getAuthUser } from '../utils/getAuthUser.js';
 import multer from 'multer';
+
+function escapeIlike(value) {
+  return value.replace(/[%_\\]/g, '\\$&');
+}
 
 /**
  * Users / profile use case. Mounted at /api/users.
@@ -52,6 +57,39 @@ router.get('/user-data', async(req,res) => {
   }
 
   return res.json({user:data});
+});
+
+// GET /api/users/search?q=
+router.get('/search', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  const query = String(req.query.q ?? '').trim();
+  if (!query) {
+    return res.json({ users: [] });
+  }
+
+  const supabase = getSupabase();
+  const pattern = `%${escapeIlike(query)}%`;
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username, firstName, lastName, profile_image, biography, favorite_sports')
+    .or(
+      `username.ilike.${pattern},firstName.ilike.${pattern},lastName.ilike.${pattern}`
+    )
+    .limit(20);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json({ users: data ?? [] });
 });
 
 // GET /api/users/:username

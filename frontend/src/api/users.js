@@ -1,3 +1,45 @@
+/** @typedef {import('../types/user.js').UserProfile} UserProfile */
+
+function getAuthHeaders() {
+  const token = localStorage.getItem('access_token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+/**
+ * @param {string} query
+ * @returns {Promise<UserProfile[]>}
+ */
+export async function searchUsers(query) {
+  const params = new URLSearchParams({ q: query });
+  const response = await fetch(`/api/users/search?${params}`, {
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to search users');
+  }
+
+  return data.users ?? [];
+}
+
+/**
+ * @param {string} username
+ * @returns {Promise<UserProfile>}
+ */
+export async function getUserByUsername(username) {
+  const response = await fetch(`/api/users/${encodeURIComponent(username)}`, {
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to load profile');
+  }
+
+  return data.profile;
+}
+
 /**
  *  @param {{ email: string, password: string }} credentials
  * @returns {Promise<{ user?: object, session?: object }>}
