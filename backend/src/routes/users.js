@@ -347,20 +347,24 @@ router.patch('/complete-profile', upload.single('profileImage'), async (req, res
 
   // If user uploaded a profile image, store it in Supabase Storage
   if (req.file) {
+    // Allowed file types for profile images
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
+    // Validate file type
     if (!allowedTypes.includes(req.file.mimetype)) {
       return res.status(400).json({
         error: "Invalid file type. Please upload a JPEG, PNG, or WebP image."
       });
     }
-
+  
+    // Get the file extension from the original filename (e.g., "jpg", "png")
   const fileExtension = req.file.originalname.split('.').pop();
 
   // File path that is uploaded to Supabase Storage, using user ID and timestamp to ensure uniqueness
   // Exmple: "userId/profile-123456789.jpg"
   const filePath = `${userId}/profile-${Date.now()}.${fileExtension}`;
 
+  // Upload the file buffer to Supabase Storage
   const { error: uploadError } = await supabaseAdmin.storage
     .from("profile-images")
     .upload(filePath, req.file.buffer, {
