@@ -1,16 +1,7 @@
+import { getAuthHeaders } from '../../utils/getAuthHeaders.js';
+
+
 /** @typedef {import('../types/event.js').Event} Event */
-
-function getAuthHeaders(includeJson = false) {
-  const token = localStorage.getItem('access_token');
-  const headers = includeJson ? { 'Content-Type': 'application/json' } : {};
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  return headers;
-}
-
 /**
  * @returns {Promise<Event[]>}
  */

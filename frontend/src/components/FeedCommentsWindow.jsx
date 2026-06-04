@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchEventComments } from "../api/comments";
+import { createEventComment, fetchEventComments } from "../api/comments";
 
 export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsClick }) {
   const [comments, setComments] = useState([]);
@@ -7,7 +7,7 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
   useEffect(() => {
     async function loadComments() {
       const comments = await fetchEventComments(selectedCommentEvent); 
-      setComments(comments);       
+      setComments(Array.isArray(comments) ? comments : []);
     }
 
     if(selectedCommentEvent) {
@@ -16,6 +16,9 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
   }, [selectedCommentEvent]);
 
   
+  function handleCommentCreated(comment) {
+    setComments((comments) => [...comments, comment]);
+  }
 
   return (
     <aside className="feed-comments-panel" aria-label="Event comments">
@@ -24,11 +27,14 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
         handleCloseCommentsClick={handleCloseCommentsClick}
       />
 
-      <div className="feed-comments-list">        
+      <div className="feed-comments-list">
         <p>no comments yet</p>
       </div>
 
-      <FeedCommentForm/>
+      <FeedCommentForm
+        selectedCommentEvent={selectedCommentEvent}
+        onCommentCreated={handleCommentCreated}
+      />
     </aside>
   ); 
 }
@@ -60,16 +66,42 @@ function FeedCommentsCloseXButton({ handleCloseCommentsClick }) {
   ); 
 }
 
-function FeedCommentForm() {
+function FeedCommentForm({ selectedCommentEvent, onCommentCreated }) {
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const trimmedMessage = message.trim();
+    if (!selectedCommentEvent || !trimmedMessage) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const comment = await createEventComment(selectedCommentEvent, trimmedMessage);
+      onCommentCreated(comment);
+      setMessage('');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
-    <form className="feed-comment-form">
+    <form className="feed-comment-form" onSubmit={handleSubmit}>
       <label htmlFor="static-event-comment">Leave a comment</label>
       <textarea
         id="static-event-comment"
         rows="4"
         placeholder="Write a comment..."
+        value={message}
+        onChange={(event) => setMessage(event.target.value)}
       />
-      <button type="button">Post Comment</button>
+      <button type="submit" disabled={isSubmitting || !message.trim()}>
+        {isSubmitting ? 'Posting...' : 'Post Comment'}
+      </button>
     </form>
   ); 
 }
