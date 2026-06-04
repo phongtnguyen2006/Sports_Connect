@@ -7,7 +7,7 @@
  * @property {string|null} profile_image
  * @property {string|null} biography
  * @property {string[]|null} favorite_sports
- * @property {boolean=} is_friend
+ * @property {boolean=} is_following
  */
 
 export {};

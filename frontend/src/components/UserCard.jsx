@@ -6,11 +6,11 @@ import './UserCard.css';
 /**
  * @param {{
  *   user: UserProfile,
- *   onAddFriend?: (userId: string) => void,
- *   isAddingFriend?: boolean,
+ *   onFollow?: (userId: string) => void,
+ *   isFollowingUser?: boolean,
  * }} props
  */
-export default function UserCard({ user, onAddFriend, isAddingFriend = false }) {
+export default function UserCard({ user, onFollow, isFollowingUser = false }) {
   const fullName =
     user.firstName && user.lastName
       ? `${user.firstName} ${user.lastName}`
@@ -18,7 +18,7 @@ export default function UserCard({ user, onAddFriend, isAddingFriend = false }) 
   const username = user.username || 'unknown';
   const profileImage = user.profile_image || '/images/images-2.jpeg';
   const favoriteSports = user.favorite_sports ?? [];
-  const isFriend = Boolean(user.is_friend);
+  const isFollowing = Boolean(user.is_following);
 
   const profileContent = (
     <>
@@ -57,20 +57,20 @@ export default function UserCard({ user, onAddFriend, isAddingFriend = false }) 
         </div>
       )}
 
-      {isFriend ? (
-        <span className="user-card-friend-badge" aria-label="Already friends">
-          Friends
+      {isFollowing ? (
+        <span className="user-card-following-badge" aria-label="Following">
+          Following
         </span>
       ) : (
         <button
           type="button"
-          className="user-card-add-friend"
-          onClick={() => onAddFriend?.(user.id)}
-          disabled={isAddingFriend || !onAddFriend}
-          aria-label={`Add ${fullName} as a friend`}
-          title="Add friend"
+          className="user-card-follow-button"
+          onClick={() => onFollow?.(user.id)}
+          disabled={isFollowingUser || !onFollow}
+          aria-label={`Follow ${fullName}`}
+          title="Follow"
         >
-          {isAddingFriend ? '…' : '+'}
+          {isFollowingUser ? '…' : '+'}
         </button>
       )}
     </article>

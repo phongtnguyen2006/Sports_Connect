@@ -26,50 +26,50 @@ export async function searchUsers(query) {
 /**
  * @returns {Promise<UserProfile[]>}
  */
-export async function fetchFriends() {
-  const response = await fetch('/api/users/friends', {
+export async function fetchFollowing() {
+  const response = await fetch('/api/users/following', {
     headers: getAuthHeaders(),
   });
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.error ?? 'Failed to load friends');
+    throw new Error(data.error ?? 'Failed to load following');
   }
 
-  return data.friends ?? [];
+  return data.following ?? [];
 }
 
 /**
- * @param {string} friendId
+ * @param {string} followingId
  */
-export async function addFriend(friendId) {
-  const response = await fetch('/api/users/friends', {
+export async function followUser(followingId) {
+  const response = await fetch('/api/users/follow', {
     method: 'POST',
     headers: {
       ...getAuthHeaders(),
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ friendId }),
+    body: JSON.stringify({ followingId }),
   });
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.error ?? 'Failed to add friend');
+    throw new Error(data.error ?? 'Failed to follow user');
   }
 }
 
 /**
- * @param {string} friendId
+ * @param {string} followingId
  */
-export async function removeFriend(friendId) {
-  const response = await fetch(`/api/users/friends/${encodeURIComponent(friendId)}`, {
+export async function unfollowUser(followingId) {
+  const response = await fetch(`/api/users/follow/${encodeURIComponent(followingId)}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.error ?? 'Failed to remove friend');
+    throw new Error(data.error ?? 'Failed to unfollow user');
   }
 }
 

@@ -74,7 +74,7 @@
   letter-spacing: 0.02em;
 }
 
-.user-card-add-friend {
+.user-card-follow-button {
   width: 40px;
   height: 40px;
   border: 1px solid #bfdbfe;
@@ -92,18 +92,18 @@
   cursor: pointer;
 }
 
-.user-card-add-friend:hover:not(:disabled) {
+.user-card-follow-button:hover:not(:disabled) {
   background: #2563eb;
   color: #ffffff;
   border-color: #2563eb;
 }
 
-.user-card-add-friend:disabled {
+.user-card-follow-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.user-card-friend-badge {
+.user-card-following-badge {
   flex-shrink: 0;
   border-radius: 999px;
   background: #dcfce7;
