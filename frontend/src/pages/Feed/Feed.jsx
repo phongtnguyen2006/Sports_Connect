@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchEvents } from '../../api/events';
 import EventCard from '../../components/EventCard';
+import { FeedCommentsWindow } from '../../components/FeedCommentsWindow.jsx';
 import './Feed.css';
 
 /** @typedef {import('../../types/event.js').Event} Event */
@@ -102,16 +103,22 @@ export default function Feed() {
       ) : null}
 
       {!loading && !error && events.length > 0 ? (
-        <section className="events-grid" aria-label="Upcoming events">
-          {events.map((event) => (
-            <EventCard key={event.id} 
-              event={event} 
-              onRsvpChange={handleRsvpChange} 
-              onCommentClick={handleCommentClick} 
-              isCommentSelected={selectedCommentEvent?.id === event.id}
-            />
-          ))}
-        </section>
+        <div className="feed-layout">
+          <section className="events-grid" aria-label="Upcoming events">
+            {events.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onRsvpChange={handleRsvpChange}
+                onCommentClick={handleCommentClick}
+                isCommentSelected={selectedCommentEvent?.id === event.id}
+              />
+            ))}
+          </section>
+
+          <FeedCommentsWindow/>
+          
+        </div>
       ) : null}
     </main>
   );
