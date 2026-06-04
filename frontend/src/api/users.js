@@ -127,3 +127,20 @@ export async function getCurrentUserProfile(token){
   }
   return data.user;
 }
+
+/**
+ * Gets a public user profile by username.
+ * @param {string} username
+ * @returns {Promise<object>}
+ */
+export async function getUserProfileByUsername(username) {
+  const response = await fetch(`/api/users/${username}`);
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error ?? "Failed to load user profile");
+  }
+
+  return data.profile;
+}

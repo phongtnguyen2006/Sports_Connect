@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getUserByUsername } from '../../api/users';
+import {
+  fetchEventsByUserId,
+  fetchJoinedEventsByUserId,
+} from '../../api/events';
 import './Profile.css';
 
 export default function PublicProfile() {
   const { username } = useParams();
   const [profile, setProfile] = useState(null);
+  const [userEvents, setUserEvents] = useState([]);
+  const [eventsJoined, setEventsJoined] = useState(0);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +26,14 @@ export default function PublicProfile() {
         const data = await getUserByUsername(username ?? '');
         if (!cancelled) {
           setProfile(data);
+
+          const createdEvents = await fetchEventsByUserId(data.id);
+          const joinedData = await fetchJoinedEventsByUserId(data.id);
+
+          if (cancelled) return;
+
+          setUserEvents(createdEvents);
+          setEventsJoined(joinedData.count);
         }
       } catch (err) {
         if (!cancelled) {
@@ -99,6 +113,44 @@ export default function PublicProfile() {
             </div>
           </div>
         </div>
+
+        <div className="profile-stats" aria-label="Profile stats">
+          <div>
+            <strong>{userEvents.length}</strong>
+            <span>Posts</span>
+          </div>
+          <div>
+            <strong>42</strong>
+            <span>Connections</span>
+          </div>
+          <div>
+            <strong>{eventsJoined}</strong>
+            <span>Events Joined</span>
+          </div>
+        </div>
+
+        <section className="posts-section" aria-labelledby="previous-posts">
+          <div className="posts-header">
+            <h2 id="previous-posts">Previous Posts</h2>
+          </div>
+
+          <div className="posts-grid">
+            {userEvents.length > 0 ? (
+              userEvents.map((event) => (
+                <article className="post" key={event.id}>
+                  <p className="post-meta">
+                    {new Date(event.starts_at).toLocaleDateString()} -{" "}
+                    {event.location || "Location TBD"}
+                  </p>
+                  <h3>{event.title}</h3>
+                  <p>{event.description || "No description provided."}</p>
+                </article>
+              ))
+            ) : (
+              <p>No previous events yet.</p>
+            )}
+          </div>
+        </section>
       </section>
     </div>
   );
