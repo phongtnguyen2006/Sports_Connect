@@ -29,10 +29,7 @@ export async function createEvent(payload, token) {
 
   const response = await fetch('/api/events', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers: getAuthHeaders(true),
     body: JSON.stringify(payload),
   });
 
@@ -109,9 +106,7 @@ export async function fetchEventRsvpUsers(eventId) {
 export async function fetchMyEvents(token) {
   const response = await fetch('/api/events/my-events', {
     method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: getAuthHeaders(),
   });
 
   const data = await response.json().catch(() => ({}));

@@ -2,6 +2,16 @@
 
 React (Vite) frontend + Express backend, backed by Supabase. Run both locally with one command.
 
+## Diagrams
+
+Entity-Relationship Diagram of Database
+![Project Screenshot](diagrams/screenshot1.png)
+Description: This diagram shows our database table relationships.
+
+Sequence Diagram of Create Event
+![Project Screenshot](diagrams/screenshot2.png)
+Description: This diagram shows the request sequence that our program follows when a user tries to create an event.
+
 ## Structure
 
 ```
@@ -13,7 +23,7 @@ package.json  Root scripts that install and run both apps together
 ## Prerequisites
 
 - Node.js 18+ and npm
-- A Supabase project (free tier) — see `DATABASE_SETUP.txt` for keys + schema
+- A Supabase project (free tier)
 
 ## Run locally
 
@@ -37,7 +47,7 @@ npm run dev:frontend # terminal 2
 ```
 
 - Frontend: <http://localhost:5173>
-- Backend:  <http://localhost:3001> (`/api/*` is proxied from the frontend)
+- Backend: <http://localhost:3001> (`/api/*` is proxied from the frontend)
 
 Verify the backend: `curl http://localhost:3001/api/health` → `{"status":"ok"}`
 
