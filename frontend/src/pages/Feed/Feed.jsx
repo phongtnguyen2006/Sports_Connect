@@ -5,6 +5,7 @@ import { followUser, searchUsers } from '../../api/users';
 import EventCard from '../../components/EventCard';
 import UserCard from '../../components/UserCard';
 import { FeedCommentsWindow } from '../../components/FeedCommentsWindow.jsx';
+import { FeedAttendeesWindow } from '../../components/FeedAttendeesWindow.jsx';
 import './Feed.css';
 
 /** @typedef {import('../../types/event.js').Event} Event */
@@ -192,6 +193,10 @@ export default function Feed() {
     setSelectedEventAction(null);
   }
 
+  function handleCloseAttendeesClick() {
+    setSelectedEventAction(null);
+  }
+
   async function handleFollow(followingId) {
     setFollowingUserId(followingId);
     setUsersError(null);
@@ -331,6 +336,14 @@ export default function Feed() {
                 handleCloseCommentsClick={handleCloseCommentsClick}
               />
             ) : null}
+
+            {selectedEventAction?.type === 'attendees' ? (
+              <FeedAttendeesWindow
+                selectedAttendeesEvent={selectedEventAction.event}
+                handleCloseAttendeesClick={handleCloseAttendeesClick}
+              />
+            ) : null}
+
           </div>
         </section>
       ) : null}
