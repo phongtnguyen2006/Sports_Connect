@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createEventComment, fetchEventComments } from "../api/comments";
+import { FeedEventPanel } from "./FeedEventPanel.jsx";
 
 export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsClick }) {
   const [comments, setComments] = useState([]);
@@ -33,13 +34,19 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
   }
 
   return (
-    <aside className="feed-comments-panel" aria-label="Event comments">
-      <FeedCommentsWindowHeader
-        selectedCommentEvent={selectedCommentEvent}
-        handleCloseCommentsClick={handleCloseCommentsClick}
-      />
-
-      <div className="feed-comments-list">
+    <FeedEventPanel
+      ariaLabel="Event comments"
+      eyebrow="Comments"
+      title={selectedCommentEvent?.title}
+      onClose={handleCloseCommentsClick}
+      closeLabel="Close comments"
+      footer={(
+        <FeedCommentForm
+          selectedCommentEvent={selectedCommentEvent}
+          onCommentCreated={handleCommentCreated}
+        />
+      )}
+    >
         {comments.length === 0 ? (
           <p className="feed-comments-empty">No comments yet</p>
         ) : (
@@ -50,40 +57,7 @@ export function FeedCommentsWindow({ selectedCommentEvent, handleCloseCommentsCl
             />
           ))
         )}
-      </div>
-
-      <FeedCommentForm
-        selectedCommentEvent={selectedCommentEvent}
-        onCommentCreated={handleCommentCreated}
-      />
-    </aside>
-  ); 
-}
-
-function FeedCommentsWindowHeader({ selectedCommentEvent, handleCloseCommentsClick }) {
-  return (
-    <div className="feed-comments-header">
-      <div>
-        <p className="feed-comments-eyebrow">Comments</p>
-        <h2>{selectedCommentEvent?.title}</h2>
-      </div>
-      <FeedCommentsCloseXButton handleCloseCommentsClick={handleCloseCommentsClick}/>
-    </div>
-  ); 
-}
-
-function FeedCommentsCloseXButton({ handleCloseCommentsClick }) {
-  return (
-    <button
-      type="button"
-      className="feed-comments-close"
-      aria-label="Close comments"
-      onClick={handleCloseCommentsClick}
-    >
-      <svg aria-hidden="true" viewBox="0 0 24 24">
-        <path d="M6 6l12 12M18 6 6 18" />
-      </svg>
-    </button>
+    </FeedEventPanel>
   ); 
 }
 
