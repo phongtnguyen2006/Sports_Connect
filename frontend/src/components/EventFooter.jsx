@@ -14,7 +14,10 @@ export default function EventFooter({
 }) {
   return (
     <footer className="event-card-footer">
-      <button type="button">
+      <button
+        type="button"
+        className="event-card-comment-button"
+      >
         Show Attendees
       </button>
       <button
