@@ -7,13 +7,16 @@
  *   isCommentSelected?: boolean,
  * }} props
  */
-export default function EventCommentButton({
+export default function EventFooter({
   event,
   onCommentClick,
   isCommentSelected = false,
 }) {
   return (
     <footer className="event-card-footer">
+      <button type="button">
+        Show Attendees
+      </button>
       <button
         type="button"
         className={`event-card-comment-button${isCommentSelected ? ' is-selected' : ''}`}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createEventRsvp, deleteEventRsvp } from '../api/events';
 import { formatEventMeta } from '../utils/formatEventMeta';
-import EventCommentButton from './EventCommentButton.jsx';
+import EventFooter from './EventFooter.jsx';
 import './EventCard.css';
 
 /** @typedef {import('../types/event.js').Event} Event */
@@ -82,7 +82,7 @@ export default function EventCard({
         <p className="event-card-attendees">Up to {event.max_attendees} attendees</p>
       ) : null}
       
-      <EventCommentButton
+      <EventFooter
         event={event}
         onCommentClick={onCommentClick}
         isCommentSelected={isCommentSelected}
