@@ -160,3 +160,17 @@ export async function unfollowUser(followerId, followingId) {
     throw new Error(formatDbError(updateError));
   }
 }
+
+export async function getFollowersForUser(userId) {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, username, firstName, lastName, profile_image, biography, favorite_sports, following");
+
+  if (error) throw error;
+
+  return (data ?? [])
+    .filter((user) => normalizeFollowing(user.following).includes(userId))
+    .map(({ following, ...profile }) => profile);
+}
