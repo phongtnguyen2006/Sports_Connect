@@ -11,14 +11,18 @@ import './EventCard.css';
  *   event: Event,
  *   onRsvpChange: (eventId: number, isRsvpd: boolean) => void,
  *   onCommentClick: (event: Event) => void,
+ *   onShowAttendeesClick: (event: Event) => void,
  *   isCommentSelected?: boolean,
+ *   isAttendeesSelected?: boolean,
  * }} props
  */
 export default function EventCard({
   event,
   onRsvpChange,
   onCommentClick,
+  onShowAttendeesClick,
   isCommentSelected = false,
+  isAttendeesSelected = false,
 }) {
   const [isRsvpUpdating, setIsRsvpUpdating] = useState(false);
   const meta = formatEventMeta(event.starts_at, event.ends_at, event.location);
@@ -85,7 +89,9 @@ export default function EventCard({
       <EventFooter
         event={event}
         onCommentClick={onCommentClick}
+        onShowAttendeesClick={onShowAttendeesClick}
         isCommentSelected={isCommentSelected}
+        isAttendeesSelected={isAttendeesSelected}
       />
     </article>
   );

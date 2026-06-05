@@ -80,10 +80,9 @@ export default function Feed() {
   const [usersLoading, setUsersLoading] = useState(false);
   const [error, setError] = useState(/** @type {string | null} */ (null));
   const [usersError, setUsersError] = useState(/** @type {string | null} */ (null));
-  const [selectedCommentEvent, setSelectedCommentEvent] = useState(
-    /** @type {Event | null} */ (null)
+  const [selectedEventAction, setSelectedEventAction] = useState(
+    /** @type {{ type: 'comments' | 'attendees', event: Event } | null} */ (null)
   );
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [followingUserId, setFollowingUserId] = useState(/** @type {string | null} */ (null));
 
   useEffect(() => {
@@ -182,13 +181,15 @@ export default function Feed() {
   }
 
   function handleCommentClick(event) {
-    setSelectedCommentEvent(event);
-    setIsCommentsOpen(true);
+    setSelectedEventAction({ type: 'comments', event });
+  }
+
+  function handleShowAttendeesClick(event) {
+    setSelectedEventAction({ type: 'attendees', event });
   }
 
   function handleCloseCommentsClick() {
-    setSelectedCommentEvent(null);
-    setIsCommentsOpen(false);
+    setSelectedEventAction(null);
   }
 
   async function handleFollow(followingId) {
@@ -311,14 +312,22 @@ export default function Feed() {
                   event={event}
                   onRsvpChange={handleRsvpChange}
                   onCommentClick={handleCommentClick}
-                  isCommentSelected={selectedCommentEvent?.id === event.id}
+                  onShowAttendeesClick={handleShowAttendeesClick}
+                  isCommentSelected={
+                    selectedEventAction?.type === 'comments' &&
+                    selectedEventAction.event.id === event.id
+                  }
+                  isAttendeesSelected={
+                    selectedEventAction?.type === 'attendees' &&
+                    selectedEventAction.event.id === event.id
+                  }
                 />
               ))}
             </div>
 
-            {isCommentsOpen ? (
+            {selectedEventAction?.type === 'comments' ? (
               <FeedCommentsWindow
-                selectedCommentEvent={selectedCommentEvent}
+                selectedCommentEvent={selectedEventAction.event}
                 handleCloseCommentsClick={handleCloseCommentsClick}
               />
             ) : null}

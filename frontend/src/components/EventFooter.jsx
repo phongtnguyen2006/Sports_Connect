@@ -4,19 +4,26 @@
  * @param {{
  *   event: Event,
  *   onCommentClick: (event: Event) => void,
+ *   onShowAttendeesClick: (event: Event) => void,
  *   isCommentSelected?: boolean,
+ *   isAttendeesSelected?: boolean,
  * }} props
  */
 export default function EventFooter({
   event,
   onCommentClick,
+  onShowAttendeesClick,
   isCommentSelected = false,
+  isAttendeesSelected = false,
 }) {
   return (
     <footer className="event-card-footer">
       <button
         type="button"
-        className="event-card-comment-button"
+        className={`event-card-comment-button${isAttendeesSelected ? ' is-selected' : ''}`}
+        onClick={() => onShowAttendeesClick(event)}
+        aria-label={`Show attendees for ${event.title}`}
+        aria-pressed={isAttendeesSelected}
       >
         Show Attendees
       </button>
