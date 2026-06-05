@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 import { getSupabase } from '../config/supabase.js';
 
-const FIVE_HOURS_IN_MS = 5 * 60 * 60 * 1000;
+const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000;
 function formatEventTime(startsAt){
     return new Date(startsAt).toLocaleString('en-US', {
         dateStyle: 'medium',
@@ -30,13 +30,13 @@ export async function sendEventReminders() {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const now = new Date();
-    const fiveHoursFromNow = new Date(now.getTime() + FIVE_HOURS_IN_MS);
+    const twoHoursFromNow = new Date(now.getTime() + TWO_HOURS_IN_MS);
 
 
     const response = await supabase
         .from("events")
         .select("*")
-        .lte("starts_at", fiveHoursFromNow.toISOString())
+        .lte("starts_at", twoHoursFromNow.toISOString())
         .gt("starts_at",now.toISOString())
         .is("reminder_sent_at",null);
     
@@ -44,10 +44,11 @@ export async function sendEventReminders() {
         console.error(response.error);
         return;
     }
-    const events = response.data;
 
-    for(const event of events ?? []){
-        const rsvps = await supabase
+    const events = response.data || [];
+
+    for(const event of events){
+        const rsvpResponse = await supabase
             .from("event_rsvps")
             .select(`
                 user_id,
@@ -56,12 +57,12 @@ export async function sendEventReminders() {
             )
             .eq("event_id",event.id);
         
-        if(rsvps.error){
+        if(rsvpResponse.error){
             console.error("errors when fetching rsvps");
             continue;
         }
-
-        for(const rsvp of rsvps.data ?? []){
+        const rsvps = rsvpResponse.data || [];
+        for(const rsvp of rsvps){
             const email = rsvp.users?.email;
             if(!email){
                 console.warn(`Skipping RSVP ${rsvp.user_id}; no email found`);
