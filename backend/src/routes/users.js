@@ -3,6 +3,7 @@ import { getSupabase, getSupabaseAdmin, isSupabaseConfigured } from '../config/s
 import { getAuthUser } from '../utils/getAuthUser.js';
 import {
   followUser,
+  getFollowersForUser,
   getFollowingForUser,
   getFollowingIds,
   unfollowUser,
@@ -183,6 +184,38 @@ router.delete('/follow/:followingId', async (req, res) => {
   } catch (err) {
     const status = err.message === 'Follow not found' ? 404 : 500;
     res.status(status).json({ error: err.message });
+  }
+});
+
+// GET /api/users/:userId/following
+router.get('/:userId/following', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  try {
+    const following = await getFollowingForUser(req.params.userId);
+    res.json({ following });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/users/:userId/followers
+router.get('/:userId/followers', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  try {
+    const followers = await getFollowersForUser(req.params.userId);
+    res.json({ followers });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
