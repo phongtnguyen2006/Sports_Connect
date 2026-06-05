@@ -14,14 +14,17 @@ const feedAds = [
   {
     src: '/images/ads/ad-1.png',
     alt: 'Advertisement',
+    href: 'https://www.llbean.com/llb/shop/129442?itemId=522444&attrValue_0=Night&sku=1000208385&qs=3152412&utm_campaign=shopping&utm_medium=SDIS&utm_source=brandpinterest&utm_content=feed&pp=0&epik=dj0yJnU9dHR6a1BtTUl0MExpaTZoRWVIQXlsMlYzOEFPcDU0OUUmcD0xJm49bnZrU3dIM2FmZkdINXVySl9Fd1R4USZ0PUFBQUFBR2wwZ3ln',
   },
   {
     src: '/images/ads/ad-2.png',
     alt: 'Advertisement',
+    href: 'https://www.nba.com/playoffs/2026/nba-finals',
   },
   {
     src: '/images/ads/ad-3.png',
     alt: 'Advertisement',
+    href: 'https://www.gnc.com/whey-protein/350281.html?ogmap=SHP%7CBR%7CGOOG%7CSTND%7Cc%7CSITEWIDE%7C%7C%7BG_Shopping_BR%7D%7C%7Badgroup%7D%7C%7C9279358699%7C193093729634&gclsrc=aw.ds&gad_source=1&gad_campaignid=9279358699&gbraid=0AAAAADsDbxjpSZHf_nQR18EaVqowL_z-m&gclid=CjwKCAjwxITRBhBYEiwA6mZm7c5GEssBnQM-GPMslM4rjys2YO1bQEvAS8UDAdlYjWELZQKi8MGB0RoCihUQAvD_BwE',
   },
 ];
 
@@ -29,12 +32,19 @@ function FeedAds() {
   return (
     <aside className="feed-ads" aria-label="Advertisements">
       {feedAds.map((ad) => (
-        <img
+        <a
           key={ad.src}
-          className="feed-ad-image"
-          src={ad.src}
-          alt={ad.alt}
-        />
+          className="feed-ad-link"
+          href={ad.href}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img
+            className="feed-ad-image"
+            src={ad.src}
+            alt={ad.alt}
+          />
+        </a>
       ))}
     </aside>
   );

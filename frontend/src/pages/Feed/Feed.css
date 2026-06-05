@@ -308,6 +308,15 @@ main:has(.feed-page) {
   pointer-events: none;
 }
 
+.feed-ad-link {
+  display: block;
+  width: 322px;
+  height: 180px;
+  line-height: 0;
+  text-decoration: none;
+  pointer-events: auto;
+}
+
 .feed-ad-image {
   width: 322px;
   height: 180px;
