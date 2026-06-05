@@ -329,6 +329,12 @@ main:has(.feed-page) {
   }
 }
 
+@media (max-width: 1180px) {
+  .feed-ads {
+    display: none;
+  }
+}
+
 @media (max-width: 980px) {
   .feed-comments-panel {
     position: static;
@@ -336,8 +342,5 @@ main:has(.feed-page) {
     min-width: 0;
     max-height: none;
     margin-top: 24px;
-@media (max-width: 1180px) {
-  .feed-ads {
-    display: none;
   }
 }
