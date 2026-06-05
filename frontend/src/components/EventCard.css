@@ -30,6 +30,18 @@
   letter-spacing: 0.02em;
 }
 
+.event-card-host-username {
+  align-self: flex-start;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #475569;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: normal;
+}
+
 .event-card-rsvp-button {
   width: 32px;
   height: 32px;

@@ -10,6 +10,7 @@
  * @property {string|null} sport
  * @property {number|null} max_attendees
  * @property {string} created_at - ISO timestamp
+ * @property {string|null} host_username
  * @property {boolean} is_rsvpd
  * @property {number} rsvp_count
  * @property {boolean} is_full

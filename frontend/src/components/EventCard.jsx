@@ -46,6 +46,9 @@ export default function EventCard({
         {event.sport ? (
           <span className="event-card-sport">{event.sport}</span>
         ) : null}
+        {event.host_username ? (
+          <span className="event-card-host-username">@{event.host_username}</span>
+        ) : null}
         {showFullStatus ? (
           <span className="event-card-full-status">Full</span>
         ) : (
