@@ -4,8 +4,7 @@ import { FeedEventPanel } from "./FeedEventPanel.jsx";
 
 export function FeedAttendeesWindow({ selectedAttendeesEvent, handleCloseAttendeesClick }) {
   const [attendees, setAttendees] = useState(null);
-  const [error, setError] = useState('');
-  const rsvpCount = selectedAttendeesEvent?.rsvp_count ?? 0;
+  const rsvpCount = attendees?.length ?? selectedAttendeesEvent?.rsvp_count ?? 0;
   const maxAttendees = selectedAttendeesEvent?.max_attendees;
   const spotsLeft = typeof maxAttendees === 'number'
     ? Math.max(0, maxAttendees - rsvpCount)
@@ -17,30 +16,23 @@ export function FeedAttendeesWindow({ selectedAttendeesEvent, handleCloseAttende
       return;
     }
 
-    let cancelled = false;
+    setAttendees(null);
 
     async function loadAttendees() {
-      setAttendees(null);
-      setError('');
-
       try {
         const users = await fetchEventRsvpUsers(selectedAttendeesEvent.id);
-        if (!cancelled) {
-          setAttendees(Array.isArray(users) ? users : []);
-        }
+        setAttendees(Array.isArray(users) ? users : []);
       } catch (err) {
-        if (!cancelled) {
-          setAttendees([]);
-          setError(err instanceof Error ? err.message : 'Failed to load attendees');
-        }
+        console.error(err);
+        setAttendees([]);
       }
     }
 
     loadAttendees();
 
-    return () => {
-      cancelled = true;
-    };
+    const intervalId = setInterval(loadAttendees, 3000);
+
+    return () => clearInterval(intervalId);
   }, [selectedAttendeesEvent]);
 
   return (
@@ -68,8 +60,6 @@ export function FeedAttendeesWindow({ selectedAttendeesEvent, handleCloseAttende
 
       {attendees === null ? (
         <p className="feed-comments-empty">Loading attendees...</p>
-      ) : error ? (
-        <p className="feed-comments-empty">{error}</p>
       ) : attendees.length === 0 ? (
         <p className="feed-comments-empty">No attendees yet</p>
       ) : (
