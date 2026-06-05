@@ -5,11 +5,11 @@ React (Vite) frontend + Express backend, backed by Supabase. Run both locally wi
 ## Diagrams
 
 Entity-Relationship Diagram of Database
-![Project Screenshot](diagrams/screenshot1.png)
+![Project Screenshot](diagrams/ERD_Diagram.png)
 Description: This diagram shows our database table relationships.
 
 Sequence Diagram of Create Event
-![Project Screenshot](diagrams/screenshot2.png)
+![Project Screenshot](diagrams/Sequence_Diagram.png)
 Description: This diagram shows the request sequence that our program follows when a user tries to create an event.
 
 ## Structure
