@@ -17,7 +17,37 @@ function toEvent(row) {
     sport: row.sport ?? null,
     max_attendees: row.max_attendees ?? null,
     created_at: row.created_at,
+    host_username: row.host_username ?? null,
   };
+}
+
+/**
+ * @param {import('../models/event.js').Event[]} events
+ * @returns {Promise<import('../models/event.js').Event[]>}
+ */
+async function getEventsWithHostUsernames(events) {
+  if (events.length === 0) {
+    return events;
+  }
+
+  const supabase = getSupabase();
+  const hostIds = [...new Set(events.map((event) => event.host_id))];
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username')
+    .in('id', hostIds);
+
+  if (error) throw error;
+
+  const usernamesByUserId = new Map(
+    (data ?? []).map((user) => [user.id, user.username])
+  );
+
+  return events.map((event) => ({
+    ...event,
+    host_username: usernamesByUserId.get(event.host_id) ?? null,
+  }));
 }
 
 
@@ -32,7 +62,7 @@ export async function getAllEvents() {
     .order('starts_at', { ascending: true });
 
   if (error) throw error;
-  return data.map(toEvent);
+  return getEventsWithHostUsernames(data.map(toEvent));
 }
 
 /**
@@ -49,7 +79,7 @@ export async function getEventsByHostId(hostId) {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data.map(toEvent);
+  return getEventsWithHostUsernames(data.map(toEvent));
 }
 
 
@@ -68,7 +98,8 @@ export async function getEventById(id) {
 
   if (error) throw error;
   console.log(data);
-  return toEvent(data);
+  const [event] = await getEventsWithHostUsernames([toEvent(data)]);
+  return event;
 }
 
 /**
@@ -187,7 +218,8 @@ export async function createEvent(input, userId) {
     .single();
 
   if (error) throw error;
-  return toEvent(data);
+  const [event] = await getEventsWithHostUsernames([toEvent(data)]);
+  return event;
 }
 
 /**
@@ -259,5 +291,5 @@ export async function getJoinedEventsByUserId(userId) {
 
   if (error) throw error;
 
-  return data.map(toEvent);
+  return getEventsWithHostUsernames(data.map(toEvent));
 }
