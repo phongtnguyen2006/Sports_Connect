@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchEvents } from '../../api/events';
-import { searchUsers } from '../../api/users';
+import { followUser, searchUsers } from '../../api/users';
 import EventCard from '../../components/EventCard';
 import UserCard from '../../components/UserCard';
 import { FeedCommentsWindow } from '../../components/FeedCommentsWindow.jsx';
@@ -74,6 +74,7 @@ export default function Feed() {
     /** @type {Event | null} */ (null)
   );
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [followingUserId, setFollowingUserId] = useState(/** @type {string | null} */ (null));
 
   useEffect(() => {
     let cancelled = false;
@@ -180,6 +181,24 @@ export default function Feed() {
     setIsCommentsOpen(false);
   }
 
+  async function handleFollow(followingId) {
+    setFollowingUserId(followingId);
+    setUsersError(null);
+
+    try {
+      await followUser(followingId);
+      setUsers((currentUsers) =>
+        currentUsers.map((user) =>
+          user.id === followingId ? { ...user, is_following: true } : user
+        )
+      );
+    } catch (err) {
+      setUsersError(err instanceof Error ? err.message : 'Failed to follow user');
+    } finally {
+      setFollowingUserId(null);
+    }
+  }
+
   return (
     <main className="feed-page">
       <FeedAds />
@@ -249,19 +268,26 @@ export default function Feed() {
         </p>
       ) : null}
 
+      {!loading && !error && isSearching && !usersLoading && !usersError && users.length === 0 ? (
+        <p className="feed-status">
+          No users found for &ldquo;{searchQuery.trim()}&rdquo;.
+        </p>
+      ) : null}
+
       {!loading && !error && isSearching && !usersLoading && users.length > 0 ? (
         <section className="feed-results-section" aria-label="Matching users">
           <h2 className="feed-section-title">Users</h2>
           <div className="users-grid">
             {users.map((user) => (
-              <UserCard key={user.id} user={user} />
+              <UserCard
+                key={user.id}
+                user={user}
+                onFollow={handleFollow}
+                isFollowingUser={followingUserId === user.id}
+              />
             ))}
           </div>
         </section>
-      ) : null}
-
-      {!loading && !error && isSearching && !usersLoading && users.length === 0 && !usersError ? (
-        <p className="feed-status">No users found for &ldquo;{searchQuery.trim()}&rdquo;.</p>
       ) : null}
 
       {!loading && !error && filteredEvents.length > 0 ? (

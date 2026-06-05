@@ -24,6 +24,60 @@ export async function searchUsers(query) {
 }
 
 /**
+ * @returns {Promise<UserProfile[]>}
+ */
+export async function fetchFollowing() {
+  const response = await fetch('/api/users/following', {
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to load following');
+  }
+
+  return data.following ?? [];
+}
+
+/**
+ * @param {string} followingId
+ */
+export async function followUser(followingId) {
+  const response = await fetch('/api/users/follow', {
+    method: 'POST',
+    headers: {
+      ...getAuthHeaders(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ followingId }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message =
+      data.error ??
+      data.message ??
+      `Failed to follow user (${response.status})`;
+    throw new Error(message);
+  }
+}
+
+/**
+ * @param {string} followingId
+ */
+export async function unfollowUser(followingId) {
+  const response = await fetch(`/api/users/follow/${encodeURIComponent(followingId)}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to unfollow user');
+  }
+}
+
+/**
  * @param {string} username
  * @returns {Promise<UserProfile>}
  */
@@ -126,4 +180,21 @@ export async function getCurrentUserProfile(token){
     throw new Error(data.error ?? 'Failed to load profile data');
   }
   return data.user;
+}
+
+/**
+ * Gets a public user profile by username.
+ * @param {string} username
+ * @returns {Promise<object>}
+ */
+export async function getUserProfileByUsername(username) {
+  const response = await fetch(`/api/users/${username}`);
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error ?? "Failed to load user profile");
+  }
+
+  return data.profile;
 }

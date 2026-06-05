@@ -110,6 +110,34 @@ router.get('/joined-events', async (req, res) => {
   }
 });
 
+// GET /api/events/user/:userId
+router.get('/user/:userId', async (req, res) => {
+  if (!requireSupabase(res)) return;
+
+  try {
+    const events = await getEventsByHostId(req.params.userId);
+    res.json({ events });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/events/user/:userId/joined
+router.get('/user/:userId/joined', async (req, res) => {
+  if (!requireSupabase(res)) return;
+
+  try {
+    const events = await getJoinedEventsByUserId(req.params.userId);
+
+    res.json({
+      events,
+      count: events.length,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/events
 router.get('/', async (req, res) => {
   if (!requireSupabase(res)) return;

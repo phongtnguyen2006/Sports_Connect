@@ -1,6 +1,13 @@
 import { Router } from 'express';
 import { getSupabase, getSupabaseAdmin, isSupabaseConfigured } from '../config/supabase.js';
 import { getAuthUser } from '../utils/getAuthUser.js';
+import {
+  followUser,
+  getFollowersForUser,
+  getFollowingForUser,
+  getFollowingIds,
+  unfollowUser,
+} from '../services/followsService.js';
 import multer from 'multer';
 
 function escapeIlike(value) {
@@ -75,21 +82,141 @@ router.get('/search', async (req, res) => {
     return res.json({ users: [] });
   }
 
-  const supabase = getSupabase();
-  const pattern = `%${escapeIlike(query)}%`;
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, username, firstName, lastName, profile_image, biography, favorite_sports')
-    .or(
-      `username.ilike.${pattern},firstName.ilike.${pattern},lastName.ilike.${pattern}`
-    )
-    .limit(20);
+  try {
+    const supabase = getSupabase();
+    const pattern = `%${escapeIlike(query)}%`;
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, username, firstName, lastName, profile_image, biography, favorite_sports')
+      .or(
+        `username.ilike.${pattern},firstName.ilike.${pattern},lastName.ilike.${pattern}`
+      )
+      .limit(20);
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    const followingIds = await getFollowingIds(user.id);
+
+    const usersWithFollowStatus = (data ?? [])
+      .filter((profile) => profile.id !== user.id)
+      .map((profile) => ({
+        ...profile,
+        is_following: followingIds.has(profile.id),
+      }));
+
+    res.json({ users: usersWithFollowStatus });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/users/following
+router.get('/following', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
   }
 
-  res.json({ users: data ?? [] });
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  try {
+    const following = await getFollowingForUser(user.id);
+    res.json({ following });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/users/follow
+router.post('/follow', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  const followingId = String(req.body?.followingId ?? '').trim();
+  if (!followingId) {
+    return res.status(400).json({ error: 'followingId is required' });
+  }
+
+  try {
+    await followUser(user.id, followingId);
+    res.status(201).json({ message: 'Now following user' });
+  } catch (err) {
+    console.error('[users/follow]', err);
+    const status =
+      err.message === 'Already following' || err.message === 'User not found'
+        ? 409
+        : err.message === 'You cannot follow yourself'
+          ? 400
+          : 500;
+    res.status(status).json({ error: err.message });
+  }
+});
+
+// DELETE /api/users/follow/:followingId
+router.delete('/follow/:followingId', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  const followingId = String(req.params.followingId ?? '').trim();
+  if (!followingId) {
+    return res.status(400).json({ error: 'followingId is required' });
+  }
+
+  try {
+    await unfollowUser(user.id, followingId);
+    res.json({ message: 'Unfollowed user' });
+  } catch (err) {
+    const status = err.message === 'Follow not found' ? 404 : 500;
+    res.status(status).json({ error: err.message });
+  }
+});
+
+// GET /api/users/:userId/following
+router.get('/:userId/following', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  try {
+    const following = await getFollowingForUser(req.params.userId);
+    res.json({ following });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/users/:userId/followers
+router.get('/:userId/followers', async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res
+      .status(503)
+      .json({ error: 'Supabase not configured. See DATABASE_SETUP.txt.' });
+  }
+
+  try {
+    const followers = await getFollowersForUser(req.params.userId);
+    res.json({ followers });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET /api/users/:username
@@ -259,20 +386,24 @@ router.patch('/complete-profile', upload.single('profileImage'), async (req, res
 
   // If user uploaded a profile image, store it in Supabase Storage
   if (req.file) {
+    // Allowed file types for profile images
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
+    // Validate file type
     if (!allowedTypes.includes(req.file.mimetype)) {
       return res.status(400).json({
         error: "Invalid file type. Please upload a JPEG, PNG, or WebP image."
       });
     }
-
+  
+    // Get the file extension from the original filename (e.g., "jpg", "png")
   const fileExtension = req.file.originalname.split('.').pop();
 
   // File path that is uploaded to Supabase Storage, using user ID and timestamp to ensure uniqueness
   // Exmple: "userId/profile-123456789.jpg"
   const filePath = `${userId}/profile-${Date.now()}.${fileExtension}`;
 
+  // Upload the file buffer to Supabase Storage
   const { error: uploadError } = await supabaseAdmin.storage
     .from("profile-images")
     .upload(filePath, req.file.buffer, {

@@ -3,7 +3,11 @@ import { getCurrentUserProfile } from "../../api/users";
 import "./Profile.css";
 import {Link} from "react-router-dom";
 import { fetchMyEvents, fetchMyRsvps } from "../../api/events";
-
+import {
+  fetchFollowersByUserId,
+  fetchFollowingByUserId,
+  unfollowUser,
+} from "../../api/follows";
 
 
 function Profile() {
@@ -12,6 +16,10 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [myEvents, setMyEvents] = useState([]);
   const [eventsJoined, setEventsJoined] = useState(0);
+  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [activeFollowPanel, setActiveFollowPanel] = useState(null);
+  const [followError, setFollowError] = useState("");
 
   useEffect(() => {
     async function loadProfile() {
@@ -26,6 +34,11 @@ function Profile() {
         
         const Profiledata = await getCurrentUserProfile(token);
         setProfile(Profiledata);
+        const followingUsers = await fetchFollowingByUserId(Profiledata.id);
+        const followerUsers = await fetchFollowersByUserId(Profiledata.id);
+
+        setFollowing(followingUsers);
+        setFollowers(followerUsers);
 
         const events = await fetchMyEvents(token);
         setMyEvents(events);
@@ -43,6 +56,18 @@ function Profile() {
     loadProfile();
     }, []);
 
+  async function handleUnfollow(userId) {
+  setFollowError("");
+
+  try {
+    await unfollowUser(userId);
+    setFollowing((prevFollowing) =>
+      prevFollowing.filter((user) => user.id !== userId)
+    );
+  } catch (err) {
+    setFollowError(err.message);
+  }
+}
   if (loading) {
     return <div className="profile-page">Loading profile...</div>;
   }
@@ -103,15 +128,91 @@ function Profile() {
             <strong>{myEvents.length}</strong>
             <span>Posts</span>
           </div>
-          <div>
-            <strong>42</strong>
-            <span>Connections</span>
-          </div>
+          <button
+            className="profile-stat-button"
+            type="button"
+            onClick={() =>
+              setActiveFollowPanel(activeFollowPanel === "following" ? null : "following")
+            }
+          >
+            <strong>{following.length}</strong>
+            <span>Following</span>
+          </button>
+
+          <button
+            className="profile-stat-button"
+            type="button"
+            onClick={() =>
+              setActiveFollowPanel(activeFollowPanel === "followers" ? null : "followers")
+            }
+          >
+            <strong>{followers.length}</strong>
+            <span>Followed By</span>
+          </button>
           <Link className="profile-stat-link" to="/profile/joined-events">
             <strong>{eventsJoined}</strong>
             <span>Events Joined</span>
           </Link>
         </div>
+        {followError && <p className="follow-error">{followError}</p>}
+
+{activeFollowPanel && (
+  <section className="follow-panel">
+    <div className="follow-panel-header">
+      <h2>{activeFollowPanel === "following" ? "Following" : "Followed By"}</h2>
+      <button
+        className="follow-panel-close"
+        type="button"
+        onClick={() => setActiveFollowPanel(null)}
+      >
+        Close
+      </button>
+    </div>
+
+    {(activeFollowPanel === "following" ? following : followers).length > 0 ? (
+      <div className="follow-list">
+        {(activeFollowPanel === "following" ? following : followers).map((user) => {
+          const name =
+            user.firstName && user.lastName
+              ? `${user.firstName} ${user.lastName}`
+              : user.username || "User";
+
+          return (
+            <div className="follow-list-item" key={user.id}>
+              <Link className="follow-user-link" to={`/users/${user.username}`}>
+                <img
+                  className="follow-user-image"
+                  src={user.profile_image || "/images/images-2.jpeg"}
+                  alt={`${name} profile`}
+                />
+                <div>
+                  <strong>{name}</strong>
+                  <span>@{user.username}</span>
+                </div>
+              </Link>
+
+              {activeFollowPanel === "following" && (
+                <button
+                  className="unfollow-button"
+                  type="button"
+                  onClick={() => handleUnfollow(user.id)}
+                >
+                  Unfollow
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <p className="no-follow-message">
+        {activeFollowPanel === "following"
+          ? "You are not following anyone yet."
+          : "No one is following you yet."}
+      </p>
+    )}
+  </section>
+)}
 
         <section className="posts-section" aria-labelledby="previous-posts">
           <div className="posts-header">

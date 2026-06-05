@@ -1,29 +1,31 @@
 .user-card {
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
+  gap: 12px;
+  align-items: center;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   background: #ffffff;
-  padding: 20px;
+  padding: 16px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  color: inherit;
+}
+
+.user-card-profile-link {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.user-card:hover {
-  border-color: #bfdbfe;
-  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
+.user-card-profile-link:hover .user-card-name {
+  color: #2563eb;
 }
 
-.user-card-static {
+.user-card-profile-link-static {
   cursor: default;
-}
-
-.user-card-static:hover {
-  border-color: #e2e8f0;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
 }
 
 .user-card-avatar {
@@ -70,4 +72,44 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+.user-card-follow-button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.user-card-follow-button:hover:not(:disabled) {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.user-card-follow-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.user-card-following-badge {
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
 }
