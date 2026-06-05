@@ -14,7 +14,7 @@ app.use(express.json());
 // All feature routers live under /api (see routes/index.js).
 app.use('/api', apiRouter);
 
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("*/30 * * * * *", async () => {
   console.log("Checking for event reminders!!!");
   await sendEventReminders();
 

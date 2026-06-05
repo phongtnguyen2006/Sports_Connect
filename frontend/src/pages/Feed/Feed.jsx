@@ -10,6 +10,36 @@ import './Feed.css';
 /** @typedef {import('../../types/event.js').Event} Event */
 /** @typedef {import('../../types/user.js').UserProfile} UserProfile */
 
+const feedAds = [
+  {
+    src: '/images/ads/ad-1.png',
+    alt: 'Advertisement',
+  },
+  {
+    src: '/images/ads/ad-2.png',
+    alt: 'Advertisement',
+  },
+  {
+    src: '/images/ads/ad-3.png',
+    alt: 'Advertisement',
+  },
+];
+
+function FeedAds() {
+  return (
+    <aside className="feed-ads" aria-label="Advertisements">
+      {feedAds.map((ad) => (
+        <img
+          key={ad.src}
+          className="feed-ad-image"
+          src={ad.src}
+          alt={ad.alt}
+        />
+      ))}
+    </aside>
+  );
+}
+
 /**
  * @param {Event} event
  * @param {string} query
@@ -171,6 +201,8 @@ export default function Feed() {
 
   return (
     <main className="feed-page">
+      <FeedAds />
+
       <header className="feed-header">
         <div>
           <h1>Event Feed</h1>
