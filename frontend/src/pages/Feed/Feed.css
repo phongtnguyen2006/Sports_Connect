@@ -237,6 +237,72 @@ main:has(.feed-page) {
   line-height: 1.5;
 }
 
+.feed-attendees-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.feed-attendees-summary div {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  background: #f8fafc;
+}
+
+.feed-attendees-summary strong {
+  display: block;
+  color: #172033;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.feed-attendees-summary span {
+  display: block;
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.feed-attendee {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+}
+
+.feed-attendee-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #1d4ed8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.feed-attendee strong {
+  display: block;
+  color: #172033;
+  font-size: 14px;
+}
+
+.feed-attendee span {
+  display: block;
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .feed-comment-form {
   border-top: 1px solid #e2e8f0;
   padding: 16px 18px 18px;
