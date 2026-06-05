@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createEventRsvp, deleteEventRsvp } from '../api/events';
 import { formatEventMeta } from '../utils/formatEventMeta';
-import EventCommentButton from './EventCommentButton.jsx';
+import EventFooter from './EventFooter.jsx';
 import './EventCard.css';
 
 /** @typedef {import('../types/event.js').Event} Event */
@@ -11,14 +11,18 @@ import './EventCard.css';
  *   event: Event,
  *   onRsvpChange: (eventId: number, isRsvpd: boolean) => void,
  *   onCommentClick: (event: Event) => void,
+ *   onShowAttendeesClick: (event: Event) => void,
  *   isCommentSelected?: boolean,
+ *   isAttendeesSelected?: boolean,
  * }} props
  */
 export default function EventCard({
   event,
   onRsvpChange,
   onCommentClick,
+  onShowAttendeesClick,
   isCommentSelected = false,
+  isAttendeesSelected = false,
 }) {
   const [isRsvpUpdating, setIsRsvpUpdating] = useState(false);
   const meta = formatEventMeta(event.starts_at, event.ends_at, event.location);
@@ -82,10 +86,12 @@ export default function EventCard({
         <p className="event-card-attendees">Up to {event.max_attendees} attendees</p>
       ) : null}
       
-      <EventCommentButton
+      <EventFooter
         event={event}
         onCommentClick={onCommentClick}
+        onShowAttendeesClick={onShowAttendeesClick}
         isCommentSelected={isCommentSelected}
+        isAttendeesSelected={isAttendeesSelected}
       />
     </article>
   );

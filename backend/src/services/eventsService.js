@@ -136,6 +136,35 @@ export async function getEventRsvps(eventId) {
   return data; 
 }
 
+/**
+ * Finds users who RSVP'd to an event.
+ *
+ * @param {number} eventId - Event id to check for RSVP'd users.
+ * @returns {Promise<Array<Record<string, any>>>}
+ */
+export async function getEventRsvpUsers(eventId) {
+  const rsvps = await getEventRsvps(eventId);
+  const userIds = rsvps.map((rsvp) => rsvp.user_id);
+
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username, firstName, lastName, profile_image')
+    .in('id', userIds);
+
+  if (error) throw error;
+
+  const usersById = new Map((data ?? []).map((user) => [user.id, user]));
+
+  return userIds
+    .map((userId) => usersById.get(userId))
+    .filter(Boolean);
+}
+
 export async function getEventRsvpCount(eventId) {
   const supabase = getSupabase(); 
 

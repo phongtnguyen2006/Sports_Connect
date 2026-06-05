@@ -4,6 +4,7 @@ import {
   getEventById,
   getEventsByHostId,
   getEventRsvpCount,
+  getEventRsvpUsers,
   getRsvpCountByEventIds,
   getUserRsvps,
   getJoinedEventsByUserId,
@@ -244,6 +245,26 @@ router.delete('/:id/rsvp', async (req, res) => {
     }
 
     res.json({ eventRsvp });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/events/:id/rsvps
+router.get('/:id/rsvps', async (req, res) => {
+  if (!requireSupabase(res)) return;
+
+  const user = await getAuthUser(req, res);
+  if (!user) return;
+
+  const idStatus = validateEventId(req.params.id);
+  if (!idStatus.ok) {
+    return res.status(400).json({ error: idStatus.error });
+  }
+
+  try {
+    const users = await getEventRsvpUsers(idStatus.data);
+    res.json({ users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
