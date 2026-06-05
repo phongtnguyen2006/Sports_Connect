@@ -84,6 +84,24 @@ export async function deleteEventRsvp(eventId) {
 }
 
 /**
+ * @param {number} eventId
+ * @returns {Promise<Array<Record<string, any>>>}
+ */
+export async function fetchEventRsvpUsers(eventId) {
+  const response = await fetch(`/api/events/${eventId}/rsvps`, {
+    headers: getAuthHeaders(),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error ?? 'Failed to load attendees');
+  }
+
+  return data.users ?? [];
+}
+
+/**
  * Fetches events created by the currently logged-in user.
  * @param {string} token
  * @returns {Promise<Event[]>}
