@@ -6,7 +6,7 @@ const secretKey = process.env.SUPABASE_SECRET_KEY;
 
 /**
  * Server-side Supabase client, created with the service role key.
- * Stays null until both env vars are filled in (see DATABASE_SETUP.txt),
+ * Stays null until both env vars are filled in,
  * so the server still boots while credentials are being set up.
  *
  * @type {import('@supabase/supabase-js').SupabaseClient | null}
@@ -33,7 +33,7 @@ if (url && secretKey) {
 } else {
   console.warn(
     '[supabase] SUPABASE_URL or SUPABASE_SECRET_KEY missing — ' +
-      'Supabase client not initialized. See DATABASE_SETUP.txt.'
+      'Supabase client not initialized.'
   );
 }
 
@@ -52,7 +52,7 @@ export function getSupabase() {
   if (!supabase) {
     throw new Error(
       'Supabase is not configured. Fill in SUPABASE_URL and ' +
-        'SUPABASE_SECRET_KEY in backend/.env. See DATABASE_SETUP.txt.'
+        'SUPABASE_SECRET_KEY in backend/.env.'
     );
   }
   return supabase;
@@ -62,7 +62,7 @@ export function getSupabaseAdmin() {
   if (!supabaseAdmin) {
     throw new Error(
       'Supabase admin client is not configured. Fill in SUPABASE_URL and ' +
-        'SUPABASE_SECRET_KEY in backend/.env. See DATABASE_SETUP.txt.'
+        'SUPABASE_SECRET_KEY in backend/.env.'
     );
   }
 
